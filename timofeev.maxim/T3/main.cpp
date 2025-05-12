@@ -94,6 +94,10 @@ namespace timofeev
       }
       for (size_t i = 0; i < count; i++)
       {
+        if (in.peek() == '\n') {
+          in.setstate(std::ios::failbit);
+          return in;
+        }
         in >> sep{ '(' };
         Point dot;
         in >> intg{ dot.x } >> sep{ ';' } >> intg{ dot.y };
@@ -103,6 +107,7 @@ namespace timofeev
       if (in.peek() != EOF && in.peek() != '\n')
       {
         in.setstate(std::ios::failbit);
+        return in;
       }
     }
     if (in)
@@ -205,12 +210,12 @@ namespace timofeev
       try
       {
         size_t num = std::stoul(type);
-        if(num < 3)
+        if (num < 3)
         {
           throw std::invalid_argument("");
         }
         double sumOfArea = std::accumulate(collection.begin(), collection.end(), 0.0,
-          [&num](double acc, Polygon shape) {return acc + (shape.Points.size() == num ? getArea(shape) : 0);});
+          [&num](double acc, Polygon shape) {return acc + (shape.Points.size() == num ? getArea(shape) : 0); });
         std::cout << std::fixed << std::setprecision(1) << sumOfArea << '\n';
       }
       catch (const std::invalid_argument& e)
@@ -304,7 +309,7 @@ namespace timofeev
       try
       {
         size_t num = std::stoul(type);
-        if(num < 3)
+        if (num < 3)
         {
           throw std::invalid_argument("");
         }
@@ -357,7 +362,7 @@ namespace timofeev
   {
     (void)type;
     size_t count = std::count_if(collection.begin(), collection.end(), isRectangle);
-    std::cout <<  count << '\n';
+    std::cout << count << '\n';
   }
 }
 
@@ -373,11 +378,18 @@ int main(int argc, char* argv[])
 
   std::vector< Polygon > data;
   std::ifstream file(argv[1]);
-  std::copy(
-    std::istream_iterator< Polygon >(file),
-    std::istream_iterator< Polygon >(),
-    std::back_inserter(data)
-  );
+  while (!file.eof())
+  {
+    std::copy(
+      std::istream_iterator< Polygon >(file),
+      std::istream_iterator< Polygon >(),
+      std::back_inserter(data)
+    );
+    if (file.fail() && !file.eof()) {
+      file.clear();
+      file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  }
 
   std::map<std::string, std::function<void(const std::vector< Polygon >&, std::string&)>> commands =
   {
