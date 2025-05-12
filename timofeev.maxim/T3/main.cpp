@@ -188,7 +188,7 @@ namespace timofeev
       }
 
       double sumOfArea = std::accumulate(collection.begin(), collection.end(), 0.0,
-        [](double acc, Polygon shape) {return acc + getArea(shape); });
+g++ -std=c++17 -o polygon_program main.cpp        [](double acc, Polygon shape) {return acc + getArea(shape); });
       std::cout << std::fixed << std::setprecision(1) << sumOfArea / collection.size() << '\n';
     }
     else
@@ -401,13 +401,16 @@ int main(int argc, char* argv[])
         if (it != commands.end()) {
           it->second(data, arg);
         }
+        else
+        {
+          std::cerr << "<INVALID COMMAND\n>";
+        }
       }
     }
     catch (...)
     {
-      std::cerr << "INVALID COMMAND\n";
+      std::cerr << "<INVALID COMMAND>\n";
     }
   }
-
   return 0;
 }
