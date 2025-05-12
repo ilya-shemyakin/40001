@@ -183,7 +183,7 @@ namespace timofeev
     else if (type == "MEAN")
     {
       if (collection.empty()) {
-        std::cout << "INVALID COMMAND" << std::endl;
+        std::cout << "<INVALID COMMAND>" << std::endl;
         return;
       }
 
@@ -196,6 +196,10 @@ namespace timofeev
       try
       {
         size_t num = std::stoul(type);
+        if(num < 3)
+        {
+          throw std::invalid_argument("");
+        }
         double sumOfArea = std::accumulate(collection.begin(), collection.end(), 0.0,
           [&num](double acc, Polygon shape) {return acc + (shape.Points.size() == num ? getArea(shape) : 0);});
         std::cout << std::fixed << std::setprecision(1) << sumOfArea << '\n';
@@ -213,7 +217,6 @@ namespace timofeev
     {
       if (collection.size() == 0)
       {
-        std::cerr << "NO FIGURES";
         throw std::invalid_argument("");
       }
 
@@ -246,7 +249,6 @@ namespace timofeev
     {
       if (collection.size() == 0)
       {
-        std::cerr << "NO FIGURES";
         throw std::invalid_argument("");
       }
 
@@ -293,6 +295,10 @@ namespace timofeev
       try
       {
         size_t num = std::stoul(type);
+        if(num < 3)
+        {
+          throw std::invalid_argument("");
+        }
         size_t countV = std::accumulate(collection.begin(), collection.end(), 0,
           [&num](double acc, Polygon shape) {return acc + (shape.Points.size() == num ? 1 : 0); });
         std::cout << countV << '\n';
