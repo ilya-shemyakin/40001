@@ -384,31 +384,22 @@ int main(int argc, char* argv[])
     {"RECTS", timofeev::RECTS},
   };
 
-  std::string line;
-  while (true)
+  std::string key;
+  while (std::cin >> key)
   {
     try
     {
-      if (std::cin.eof())
-      {
-        break;
+      std::string arg;
+      std::getline(std::cin, arg);
+      arg.erase(0, 1);
+
+      auto it = commands.find(key);
+      if (it != commands.end()) {
+        it->second(data, arg);
       }
       else
       {
-        std::string key;
-        std::string arg;
-        std::cin >> key;
-        std::getline(std::cin, arg);
-        arg.erase(0, 1);
-
-        auto it = commands.find(key);
-        if (it != commands.end()) {
-          it->second(data, arg);
-        }
-        else
-        {
-          std::cerr << "<INVALID COMMAND>\n";
-        }
+        std::cerr << "<INVALID COMMAND>\n";
       }
     }
     catch (...)
