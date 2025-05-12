@@ -12,4 +12,6 @@ struct Polygon
     std::vector< Point > points;
 };
 
+
+
 #endif
