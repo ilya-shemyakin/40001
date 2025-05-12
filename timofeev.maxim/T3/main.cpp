@@ -87,6 +87,11 @@ namespace timofeev
         in.setstate(std::ios::failbit);
         return in;
       }
+      if (count < 3)
+      {
+        in.setstate(std::ios::failbit);
+        return in;
+      }
       for (size_t i = 0; i < count; i++)
       {
         in >> sep{ '(' };
