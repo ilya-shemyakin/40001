@@ -188,7 +188,7 @@ namespace timofeev
       }
 
       double sumOfArea = std::accumulate(collection.begin(), collection.end(), 0.0,
-g++ -std=c++17 -o polygon_program main.cpp        [](double acc, Polygon shape) {return acc + getArea(shape); });
+        [](double acc, Polygon shape) {return acc + getArea(shape); });
       std::cout << std::fixed << std::setprecision(1) << sumOfArea / collection.size() << '\n';
     }
     else
