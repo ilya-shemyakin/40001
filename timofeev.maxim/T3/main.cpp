@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <iterator>
+#include <limits>
 
 namespace timofeev
 {
