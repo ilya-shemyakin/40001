@@ -95,6 +95,10 @@ namespace timofeev
         input.Points.push_back(dot);
         in >> sep{ ')' };
       }
+      if (in.peek() != EOF && in.peek() != '\n')
+      {
+        in.setstate(std::ios::failbit);
+      }
     }
     if (in)
     {
@@ -403,7 +407,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-          std::cerr << "<INVALID COMMAND\n>";
+          std::cerr << "<INVALID COMMAND>\n";
         }
       }
     }
