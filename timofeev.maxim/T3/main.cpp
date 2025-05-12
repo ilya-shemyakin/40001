@@ -399,12 +399,12 @@ int main(int argc, char* argv[])
       }
       else
       {
-        std::cerr << "<INVALID COMMAND>\n";
+        std::cout << "<INVALID COMMAND>\n";
       }
     }
     catch (...)
     {
-      std::cerr << "<INVALID COMMAND>\n";
+      std::cout << "<INVALID COMMAND>\n";
     }
   }
   return 0;
