@@ -1,60 +1,123 @@
-#include "commands.hpp"
+#include "functions.hpp"
+#include "functors.hpp"
 #include <cstddef>
 #include <string>
 #include <numeric>
+#include <iomanip>
+#include <algorithm>
+#include "commands.hpp"
 
-struct AreaAccumulator
+void AREA(const std::vector<Polygon>& polygons, const std::string& parameter)
 {
-    const Polygon& polygons;
-    double operator()(double accum,size_t i) const
-    {
-        size_t j = (i + 1) % polygons.points.size();
-        return accum + (polygons.points[i].x * polygons.points[j].y) - (polygons.points[j].x * polygons.points[i].y);
+    if (parameter == "EVEN") {
+        double sumOfArea = std::accumulate(polygons.begin(), polygons.end(), 0.0, EvenAccumulator());
+        std::cout << std::fixed << std::setprecision(1) << sumOfArea << '\n';
     }
-};
-
-struct EvenAccumulator
+    else if (parameter == "ODD") {
+        double sumOfArea = std::accumulate(polygons.begin(), polygons.end(), 0.0, OddAccumulator());
+        std::cout << std::fixed << std::setprecision(1) << sumOfArea << '\n';
+    }
+    else if (parameter == "MEAN") {
+        if (polygons.empty()) {
+            std::cout << "<INVALID COMMAND>" << '\n';
+            return;
+        }
+        double sumOfArea = std::accumulate(polygons.begin(), polygons.end(), 0.0, MeanAccumulator());
+        std::cout << std::fixed << std::setprecision(1) << sumOfArea / polygons.size() << '\n';
+    }
+    else {
+        try {
+            size_t num = std::stoul(parameter);
+            if (num < 3) {
+                throw std::invalid_argument("");
+            }
+            double sumOfArea = std::accumulate(polygons.begin(), polygons.end(), 0.0, NumOfVertexesAccumulator(num));
+            std::cout << std::fixed << std::setprecision(1) << sumOfArea << '\n';
+        }
+        catch (const std::invalid_argument&) {
+            std::cout << "<INVALID COMMAND" << '\n';
+        }
+    }
+}
+void MAX(const std::vector<Polygon>& polygons, const std::string& parameter)
 {
-    double operator()(double accum, const Polygon& polygons) const
-    {
-        return accum + ((polygons.points.size() % 2 == 1) ? AREA(polygons) : 0);
+    if (polygons.empty()) {
+        std::cout << "<INVALID COMMAND>" << '\n';
+        return;
     }
-};
-
-struct OddAccumulator
+    if (parameter == "AREA") {
+        auto maxArea = std::max_element(polygons.begin(), polygons.end(), MaxAreaComparator());
+        std::cout << std::fixed << std::setprecision(1) << getArea(*maxArea) << '\n';
+    }
+    else if (parameter == "VERTEXES") {
+        auto maxVertexes = std::max_element(polygons.begin(), polygons.end(), MaxOfVertexesComparator());
+        std::cout << std::fixed << std::setprecision(0) << maxVertexes->points.size() << '\n';
+    }
+    else {
+        std::cout << "<INVALID COMMAND>" << '\n';
+    }
+}
+void MIN(const std::vector<Polygon>& polygons, const std::string& parameter)
 {
-    double operator()(double accum, const Polygon& polygons) const
-    {
-        return accum + ((polygons.points.size() % 2 == 1) ? AREA(polygons) : 0);
+    if (polygons.empty()) {
+        std::cout << "<INVALID COMMAND>" << '\n';
+        return;
     }
-};
-
-struct MeanAccumulator
+    if (parameter == "AREA") {
+        auto minArea = std::min_element(polygons.begin(), polygons.end(), MinAreaComparator());
+        std::cout << std::fixed << std::setprecision(1) << getArea(*minArea) << '\n';
+    }
+    else if (parameter == "VERTEXES") {
+        auto minVertexes = std::min_element(polygons.begin(), polygons.end(), MinOfVertexesComparator());
+        std::cout << std::fixed << std::setprecision(1) << minVertexes->points.size() << '\n';
+    }
+    else {
+        std::cout << "<INVALID COMMAND>" << '\n';
+    }
+}
+void COUNT(const std::vector<Polygon>& polygons, const std::string& parameter)
 {
-    double operator()(double accum, const Polygon& polygons) const
-    {
-        return accum + AREA(polygons);
+    if (polygons.empty()) {
+        std::cout << "<INVALID COMMAND>" << '\n';
+        return;
     }
-};
-
-struct NumOfVertexesAccumulator
+    if (parameter == "EVEN") {
+        size_t count = std::accumulate(polygons.begin(), polygons.end(), 0, EvenCountAccumulator());
+        std::cout << count << '\n';
+    }
+    else if (parameter == "ODD") {
+        size_t count = std::accumulate(polygons.begin(), polygons.end(), 0, OddCountAccumulator());
+        std::cout << count << '\n';
+    }
+    else {
+        try {
+            size_t num = std::stoul(parameter);
+            if (num < 3) {
+                throw std::invalid_argument("");
+            }
+            size_t count = std::accumulate(polygons.begin(), polygons.end(), 0, VertexCountAccumulator(num));
+            std::cout << count << '\n';
+        }
+        catch (const std::invalid_argument&) {
+            std::cout << "<INVALID ARGUMENT>" << '\n';
+        }
+    }
+}
+void RECTS(const std::vector<Polygon>& polygons)
 {
-    size_t num;
-    NumOfVertexesAccumulator(size_t n) :
-        num(n)
-    {}
-    double operator()(double accum, const Polygon& polygons) const
-    {
-        return accum + ((polygons.points.size() == num) ? AREA(polygons) : 0);
+    if (polygons.empty()) {
+        std::cout << "<INVALID COMMAND>" << '\n';
+        return;
     }
-};
+    size_t count = std::count_if(polygons.begin(), polygons.end(), IsRectangleChecker());
+    std::cout << count << '\n';
+}
 
-
-double AREA(const Polygon& polygons)
+void INTERSECTIONS(const std::vector<Polygon>& polygons, const Polygon& target)
 {
-    if (polygons.points.size() < 3) {
-        return 0.0;
+    if (polygons.empty()) {
+        std::cout << "<INVALID COMMAND>" << '\n';
+        return;
     }
-    double area = std::accumulate(polygons.points.begin(), polygons.points.end(), 0.0, AreaAccumulator{ polygons });
-    return std::abs(area) / 2.0;
+
 }

@@ -15,4 +15,12 @@ std::istream& operator>>(std::istream& stream, Delimiter&& value)
     }
     return stream;
 }
-
+std::istream& operator>>(std::istream& stream, Int&& value)
+{
+    std::istream::sentry sentry(stream);
+    if (!sentry)
+    {
+        return stream;
+    }
+    return stream >> value.reference;
+}
