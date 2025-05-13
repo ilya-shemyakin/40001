@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "task.h"
 
 int main(int argc, char* argv[]) {
@@ -21,11 +22,15 @@ int main(int argc, char* argv[]) {
     }
     file.close();
 
-    std::string command;
-    while (std::getline(std::cin, command))
-        shapes.processCommand(command);
-    }
-
+    shapes.print();
+//    std::string command;
+//    while (std::getline(std::cin, command)) {
+//        std::stringstream scommand(command);
+//        shapes.processCommand(scommand);
+//    }
+    workable::Wrapper wrap(std::cin, std::cout);
+    shapes.processCommand(wrap);
+    
     return 0;
 }
 

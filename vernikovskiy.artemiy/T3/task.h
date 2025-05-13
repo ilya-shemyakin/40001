@@ -1,10 +1,21 @@
+#ifndef TASK_H
+#define TASK_H
+
 #include <vector>
 #include <string>
+#include <string_view>
 #include <sstream>
 #include <algorithm>
+#include <numeric>
 #include <iostream>
+#include <map>
+#include <variant>
+#include <functional>
+#include <sstream>
+#include "additional.h"
 
 // 5 var
+using namespace workable;
 namespace doomsday
 {
     struct Point
@@ -31,36 +42,54 @@ namespace doomsday
         bool operator==(const Polygon& other) const {
             return points == other.points;
         }
+        
+        bool operator==(std::nullptr_t) const {
+            return false;
+        }
+        
+        Polygon() {};
     };
 
     class Shapes
     {
     private:
-        std::vector< Polygon > shapes;
-        const char* ERROR_INVALID_COMMAND = "<INVALID COMMAND>";
-        const std::vector< std::string > valid_commands = {"ECHO", "INFRAME"};
-
+        static std::vector< Polygon > shapes;
+        static constexpr std::string_view ERROR_INVALID_COMMAND = "<INVALID COMMAND>";
+        using FunctionVariant = std::variant<
+            std::function<unsigned int(const Wrapper& wrapper)>,
+            std::function<bool(const Wrapper& wrapper)>,
+            std::function<double(const Wrapper& wrapper)>,
+            std::function<void(const Wrapper&)>
+        >;
+        std::map<std::string, FunctionVariant> functionMap;
+        
         std::vector< std::string > split(const std::string& str, const char delimiter);
+        static Point parsePoint(const Wrapper& wrapper);
         Point parsePoint(const std::string& declar);
-        Polygon buildFrame();
+        static Polygon buildFrame();
+        static double getPolygonArea(const Polygon& shape);
+        
 
     public:
-        Shapes() {};
+        Shapes();
+        static Polygon parseShape(const Wrapper& wrapper);
         Polygon parseShape(const int dots, const std::vector< std::string >& data);
-        void addShape(const std::string& declar);
+        void addShape(const std::string& param);
 
-        bool validCommand(const std::string& com);
+        void processCommand(const Wrapper& wrapper);
+        static bool isShapeExist(const Polygon& shape);
 
-        void processCommand(const std::string& com);
-
-        bool isShapeExist(const Polygon& shape);
-
-        void echo(const Polygon& workShape);
-
-        bool inFrame(const Polygon& workShape);
+        static unsigned int echo(const Wrapper& wrapper);
+        static bool inFrame(const Wrapper& wrapper);
+        static double area(const Wrapper& wrapper);
+        static double max(const Wrapper& wrapper);
+        static double min(const Wrapper& wrapper);
+        static double count(const Wrapper& wrapper);
 
         void print();
 
         ~Shapes() = default;
     };
 };
+
+#endif
