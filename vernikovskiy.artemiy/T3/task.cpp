@@ -76,7 +76,6 @@ Point Shapes::parsePoint(const Wrapper& wrapper) {
         std::cout << wrapper.cin.fail() << std::endl;
         if (!wrapper.cin.eof() && !wrapper.cin.bad()) {
             wrapper.cin.clear();
-            throw std::runtime_error("dummy main CIN");
         }
     }
 
