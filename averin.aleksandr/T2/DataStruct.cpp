@@ -6,6 +6,7 @@
 
 namespace averin
 {
+
   bool dataStructCompare(const DataStruct &a, const DataStruct &b)
   {
     if (a.key1 != b.key1)
@@ -177,7 +178,7 @@ namespace averin
     }
     iofmtguard fmtguard(out);
     out << "(:key1 " << src.key1 << "ull"
-    << ":key2 0b" << src.key2
+    << ":key2 0b0" << ((src.key2 == 0) ? "" : std::to_string(src.key2))
     << ":key3 \"" << src.key3 << "\":)";
 
 
