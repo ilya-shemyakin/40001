@@ -155,7 +155,7 @@ unsigned int Shapes::echo(const Wrapper& wrapper) {
         return 0;
     }
     std::vector<decltype(shapes.begin())> tmp;
-    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) {
+    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) { // std::find
         if (workShape == *shapeit) {
             tmp.push_back(shapeit + 1);
         }
@@ -186,15 +186,11 @@ double Shapes::getPolygonArea(const Polygon& shape) {
         return 0;
     }
     double area = 0.0;
-    int n = shape.points.size();
-    int j = n - 1;
-    for (int i = 0; i < n; i++){
-        area += (shape.points[j].x_ - shape.points[i].x_) *
-            (shape.points[j].y_ + shape.points[i].y_); // or vice versa +-
-        j = i;
+    for (int i = 1; i < shape.points.size() - 1; i++) {
+        area += (triangleArea(shape.points[0], shape.points[i], shape.points[i+1])); // or vice versa +-
     }
-    std::cout << "AREA " << area << std::endl;
-    return abs(area / 2.0);
+    // std::cout << area << std::endl;
+    return abs(area);
 }
 
 double Shapes::area(const Wrapper& wrapper) {

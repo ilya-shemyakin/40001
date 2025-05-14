@@ -18,24 +18,6 @@
 using namespace workable;
 namespace doomsday
 {
-    struct Point
-    {
-        int x_, y_;
-        Point(int x, int y): x_(x), y_(y) {};
-        Point(): x_(0), y_(0) {};
-
-        bool operator==(const Point& other) const {
-            return x_ == other.x_ && y_ == other.y_;
-        }
-
-        bool operator<(const Point& other) const {
-            return x_ < other.x_ && y_ < other.y_;
-        }
-
-        bool operator>(const Point& other) const {
-            return x_ > other.x_ && y_ > other.y_;
-        }
-    };
     struct Polygon
     {
         std::vector< Point > points;
