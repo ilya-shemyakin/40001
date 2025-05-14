@@ -199,7 +199,7 @@ double Shapes::getPolygonArea(const Polygon& shape) {
     int n = shape.points.size();
     int j = n - 1;
     for (int i = 0; i < n; i++){
-        area += (shape.points[j].x_ - shape.points[i].x_) * 
+        area += (shape.points[j].x_ - shape.points[i].x_) *
             (shape.points[j].y_ + shape.points[i].y_); // or vice versa +-
         j = i;
     }

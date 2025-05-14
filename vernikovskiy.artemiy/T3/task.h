@@ -42,11 +42,11 @@ namespace doomsday
         bool operator==(const Polygon& other) const {
             return points == other.points;
         }
-        
+
         bool operator==(std::nullptr_t) const {
             return false;
         }
-        
+
         Polygon() {};
     };
 
@@ -62,13 +62,13 @@ namespace doomsday
             std::function<void(const Wrapper&)>
         >;
         std::map<std::string, FunctionVariant> functionMap;
-        
+
         std::vector< std::string > split(const std::string& str, const char delimiter);
         static Point parsePoint(const Wrapper& wrapper);
         Point parsePoint(const std::string& declar);
         static Polygon buildFrame();
         static double getPolygonArea(const Polygon& shape);
-        
+
 
     public:
         Shapes();

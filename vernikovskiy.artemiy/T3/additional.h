@@ -13,7 +13,7 @@ namespace workable
     struct DelimiterIO {
         char delim;
     };
-    
+
     std::istream& operator>>(std::istream& is, DelimiterIO&& delim);
 };
 
