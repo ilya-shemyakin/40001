@@ -37,7 +37,7 @@ namespace averin
     return in;
   }
 
-  std::istream &operator>>(std::istream &in, ULLBinIO &&dest)
+ std::istream &operator>>(std::istream &in, ULLBinIO &&dest)
   {
     std::istream::sentry sentry(in);
     if (!sentry)
@@ -176,21 +176,12 @@ namespace averin
       return out;
     }
     iofmtguard fmtguard(out);
-    out << "(:key1 " << src.key1 << "ull:key2 0" << std::oct << src.key2 << std::dec << ":key3 \"" << src.key3 << "\":)";
-    return out;
-  }
+    out << "(:key1 " << src.key1 << "ull"
+    << ":key2 0b" << src.key2
+    << ":key3 \"" << src.key3 << "\":)";
 
-  bool compareDataStruct(const DataStruct &a, const DataStruct &b)
-  {
-    if (a.key1 != b.key1)
-    {
-      return a.key1 < b.key1;
-    }
-    if (a.key2 != b.key2)
-    {
-      return a.key2 < b.key2;
-    }
-    return a.key3.length() < b.key3.length();
+
+    return out;
   }
 
   iofmtguard::iofmtguard(std::basic_ios<char> &s) : s_(s),

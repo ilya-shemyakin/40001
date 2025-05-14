@@ -10,8 +10,6 @@ namespace averin
         std::string key3;
     };
 
-    bool compareDataStruct(const DataStruct &a, const DataStruct &b);
-
     struct DelimiterIO
     {
         char exp;
