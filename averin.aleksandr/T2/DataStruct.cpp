@@ -74,7 +74,6 @@ namespace averin
       return in;
     }
 
-    iofmtguard guard(in);
     unsigned long long temp = 0;
     char ullTag[4] = {0};
 
@@ -126,6 +125,7 @@ namespace averin
     {
       return in;
     }
+
     DataStruct input;
     {
       using sep = DelimiterIO;
@@ -176,7 +176,7 @@ namespace averin
     {
       return out;
     }
-    iofmtguard fmtguard(out);
+    
     out << "(:key1 " << src.key1 << "ull"
     << ":key2 0b0" << ((src.key2 == 0) ? "" : std::to_string(src.key2))
     << ":key3 \"" << src.key3 << "\":)";
