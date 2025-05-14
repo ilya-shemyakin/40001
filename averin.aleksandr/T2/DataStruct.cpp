@@ -182,7 +182,7 @@ namespace averin
     << ":key3 \"" << src.key3 << "\":)";
 
 
-    return out;
+  return out;
   }
 
   iofmtguard::iofmtguard(std::basic_ios<char> &s) : s_(s),
