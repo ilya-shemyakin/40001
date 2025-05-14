@@ -10,7 +10,7 @@ namespace averin
         std::string key3;
     };
 
-    bool compareDataStruct(const DataStruct& a, const DataStruct& b);
+    bool compareDataStruct(const DataStruct &a, const DataStruct &b);
 
     struct DelimiterIO
     {
@@ -19,17 +19,17 @@ namespace averin
 
     struct ULLBinIO
     {
-        unsigned long long& ref;
+        unsigned long long &ref;
     };
 
     struct ULLLitIO
     {
-        unsigned long long& ref;
+        unsigned long long &ref;
     };
 
     struct StringIO
     {
-        std::string& ref;
+        std::string &ref;
     };
 
     struct LabelIO
@@ -37,28 +37,28 @@ namespace averin
         std::string exp;
     };
 
-    
     class iofmtguard
     {
     public:
-        iofmtguard(std::basic_ios< char >& s);
+        iofmtguard(std::basic_ios<char> &s);
         ~iofmtguard();
+
     private:
-        std::basic_ios< char >& s_;
+        std::basic_ios<char> &s_;
         std::streamsize width_;
         char fill_;
         std::streamsize precision_;
-        std::basic_ios< char >::fmtflags fmt_;
+        std::basic_ios<char>::fmtflags fmt_;
     };
 
-    std::istream& operator>>(std::istream& in, DelimiterIO&& dest);
-    std::istream& operator>>(std::istream& in, ULLBinIO&& dest);
-    std::istream& operator>>(std::istream& in, ULLLitIO&& dest);
-    std::istream& operator>>(std::istream& in, StringIO&& dest);
-    std::istream& operator>>(std::istream& in, LabelIO&& dest);
-    std::istream& operator>>(std::istream& in, DataStruct& dest);
-    std::ostream& operator<<(std::ostream& out, const DataStruct& dest);
+    std::istream &operator>>(std::istream &in, DelimiterIO &&dest);
+    std::istream &operator>>(std::istream &in, ULLBinIO &&dest);
+    std::istream &operator>>(std::istream &in, ULLLitIO &&dest);
+    std::istream &operator>>(std::istream &in, StringIO &&dest);
+    std::istream &operator>>(std::istream &in, LabelIO &&dest);
+    std::istream &operator>>(std::istream &in, DataStruct &dest);
+    std::ostream &operator<<(std::ostream &out, const DataStruct &dest);
 
-    bool dataStructCompare(const DataStruct& a, const DataStruct& b);
+    bool dataStructCompare(const DataStruct &a, const DataStruct &b);
 }
 #endif
