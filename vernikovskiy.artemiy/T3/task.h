@@ -60,31 +60,29 @@ namespace doomsday
             std::function<bool(const Wrapper& wrapper)>,
             std::function<double(const Wrapper& wrapper)>,
             std::function<void(const Wrapper&)>
-        >;
+        >; // no variant, use only std::function<void(const Wrapper&)>
         std::map<std::string, FunctionVariant> functionMap;
 
-        std::vector< std::string > split(const std::string& str, const char delimiter);
         static Point parsePoint(const Wrapper& wrapper);
-        Point parsePoint(const std::string& declar);
+        Point parsePoint(std::ifstream& ifStream);
         static Polygon buildFrame();
         static double getPolygonArea(const Polygon& shape);
-
-
-    public:
-        Shapes();
         static Polygon parseShape(const Wrapper& wrapper);
-        Polygon parseShape(const int dots, const std::vector< std::string >& data);
-        void addShape(const std::string& param);
-
-        void processCommand(const Wrapper& wrapper);
-        static bool isShapeExist(const Polygon& shape);
-
+        Polygon parseShape(std::ifstream& ifStream);
         static unsigned int echo(const Wrapper& wrapper);
         static bool inFrame(const Wrapper& wrapper);
         static double area(const Wrapper& wrapper);
         static double max(const Wrapper& wrapper);
         static double min(const Wrapper& wrapper);
         static double count(const Wrapper& wrapper);
+        static bool isShapeExist(const Polygon& shape);
+
+
+    public:
+        Shapes();
+        void addShape(std::ifstream& ifStream);
+
+        void processCommand(const Wrapper& wrapper);
 
         void print();
 

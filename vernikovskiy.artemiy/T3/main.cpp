@@ -17,14 +17,14 @@ int main(int argc, char* argv[]) {
     }
 
     doomsday::Shapes shapes;
-    while (std::getline(file, declar)) {
-        shapes.addShape(declar);
-    }
+    shapes.addShape(file);
     file.close();
 
+    shapes.print();
 
     workable::Wrapper wrap(std::cin, std::cout);
     shapes.processCommand(wrap);
+    shapes.print();
 
     return 0;
 }

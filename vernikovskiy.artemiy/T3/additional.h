@@ -2,6 +2,7 @@
 #define ADDITIONAL_H
 
 #include <iostream>
+#include <fstream>
 
 namespace workable
 {
@@ -15,6 +16,7 @@ namespace workable
     };
 
     std::istream& operator>>(std::istream& is, DelimiterIO&& delim);
+    std::ifstream& operator>>(std::ifstream& is, DelimiterIO&& delim);
 };
 
 #endif

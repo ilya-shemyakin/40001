@@ -12,18 +12,6 @@ Shapes::Shapes() {
     functionMap["COUNT"] = std::function<double(const Wrapper&)>(count);
 }
 
-std::vector< std::string > Shapes::split(const std::string& str, const char delimiter) {
-    std::vector< std::string > tokens;
-    std::stringstream ss(str);
-    std::string token;
-
-    while (std::getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-
-    return tokens;
-}
-
 using FunctionVariant = std::variant<
     std::function<unsigned int(const Wrapper& wrapper)>,
     std::function<bool(const Wrapper& wrapper)>,
@@ -68,20 +56,6 @@ void Shapes::processCommand(const Wrapper& wrapper) {
     }
 }
 
-Point Shapes::parsePoint(const Wrapper& wrapper) {
-    int x, y;
-    if (!(wrapper.cin >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
-    {
-        std::cout << ERROR_INVALID_COMMAND << std::endl;
-        std::cout << wrapper.cin.fail() << std::endl;
-        if (!wrapper.cin.eof() && !wrapper.cin.bad()) {
-            wrapper.cin.clear();
-        }
-    }
-
-    return Point(x, y);
-}
-
 Polygon Shapes::buildFrame() {
     int xLeft = 999, xRight = -999, yDown = 999, yUp = -999;
     for (auto& shape : shapes)
@@ -100,27 +74,48 @@ Polygon Shapes::buildFrame() {
     return res;
 }
 
-Point Shapes::parsePoint(const std::string& declar) {
-    std::vector< std::string > coords = split(declar.substr(1, declar.size()-1), ';');
+Point Shapes::parsePoint(const Wrapper& wrapper) {
     int x, y;
-    try {
-        x = std::stoi(coords[0]);
-        y = std::stoi(coords[1]);
-    } catch (const std::invalid_argument& e) {
+    if (!(wrapper.cin >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
+    {
         std::cout << ERROR_INVALID_COMMAND << std::endl;
-        throw std::runtime_error("dummy"); // do my exception with try catch
+        std::cout << wrapper.cin.fail() << std::endl;
+        if (!wrapper.cin.eof() && !wrapper.cin.bad()) {
+            wrapper.cin.clear();
+        }
     }
 
     return Point(x, y);
 }
 
-Polygon Shapes::parseShape(const int dots, const std::vector< std::string >& data) {
+Point Shapes::parsePoint(std::ifstream& ifStream) {
+    int x, y;
+    if (!(ifStream >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
+    {
+        std::cout << ERROR_INVALID_COMMAND << std::endl;
+        std::cout << ifStream.fail() << std::endl;
+        if (!ifStream.eof() && !ifStream.bad()) {
+            ifStream.clear();
+        }
+    }
+
+    return Point(x, y);
+}
+
+Polygon Shapes::parseShape(std::ifstream& ifStream) {
+    int dots = 0;
+    if (!(ifStream >> dots)) {
+        return Polygon();
+    }
+    if (dots <= 2) {
+        std::cout << ERROR_INVALID_COMMAND << std::endl;
+        return Polygon();
+    }
     Polygon shape;
     for (int i = 0; i < dots; i++)
     {
-        shape.points.push_back(parsePoint(data[i+1]));
+        shape.points.push_back(parsePoint(ifStream));
     }
-
     return shape;
 }
 
@@ -141,21 +136,13 @@ Polygon Shapes::parseShape(const Wrapper& wrapper) {
     return shape;
 }
 
-void Shapes::addShape(const std::string& declar) {
-    std::vector< std::string > data = split(declar, ' ');
-    int dots = 0;
-    try {
-        dots = std::stoi(data[0]);
-    } catch (const std::invalid_argument& e) {
-        // std::cout << ERROR_INVALID_COMMAND << std::endl;
-        return;
+void Shapes::addShape(std::ifstream& ifStream) {
+    while (!ifStream.eof()) {
+        Polygon shape = parseShape(ifStream);
+        if (shape.points.size() != 0) {
+            shapes.push_back(shape);
+        }
     }
-    if (dots <= 1)
-    {
-        return;
-    }
-
-    shapes.push_back(parseShape(dots, data));
 }
 
 bool Shapes::isShapeExist(const Polygon& shape) {
@@ -195,6 +182,9 @@ bool Shapes::inFrame(const Wrapper& wrapper) {
 }
 
 double Shapes::getPolygonArea(const Polygon& shape) {
+    if (shape.points.size() < 3) {
+        return 0;
+    }
     double area = 0.0;
     int n = shape.points.size();
     int j = n - 1;
