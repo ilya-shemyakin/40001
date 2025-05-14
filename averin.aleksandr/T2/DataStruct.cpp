@@ -125,7 +125,6 @@ namespace averin
     {
       return in;
     }
-
     DataStruct input;
     {
       using sep = DelimiterIO;
@@ -176,13 +175,12 @@ namespace averin
     {
       return out;
     }
-    
     out << "(:key1 " << src.key1 << "ull"
     << ":key2 0b0" << ((src.key2 == 0) ? "" : std::to_string(src.key2))
     << ":key3 \"" << src.key3 << "\":)";
 
 
-  return out;
+    return out;
   }
 
   iofmtguard::iofmtguard(std::basic_ios<char> &s) : s_(s),
