@@ -20,11 +20,11 @@ int main(int argc, char* argv[]) {
     shapes.addShape(file);
     file.close();
 
-    shapes.print();
+    //shapes.print();
 
     workable::Wrapper wrap(std::cin, std::cout);
     shapes.processCommand(wrap);
-    shapes.print();
+    //shapes.print();
 
     return 0;
 }
