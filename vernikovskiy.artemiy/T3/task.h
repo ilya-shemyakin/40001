@@ -37,7 +37,7 @@ namespace doomsday
     {
     private:
         static std::vector< Polygon > shapes;
-        static constexpr char* ERROR_INVALID_COMMAND = "<INVALID COMMAND>";
+        static constexpr const char* ERROR_INVALID_COMMAND = "<INVALID COMMAND>";
 /*        using FunctionVariant = std::variant<*/
 /*            std::function<unsigned int(const Wrapper& wrapper)>,*/
 /*            std::function<bool(const Wrapper& wrapper)>,*/
