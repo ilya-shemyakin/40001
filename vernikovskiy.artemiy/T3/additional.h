@@ -33,7 +33,7 @@ namespace workable
             return x_ > other.x_ && y_ > other.y_;
         }
     };
-    
+
     double distance(const Point& p1, const Point& p2);
     double triangleArea(const Point& p1, const Point& p2, const Point& p3);
 

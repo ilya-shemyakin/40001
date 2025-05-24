@@ -35,11 +35,11 @@ namespace workable
         }
         return is;
     }
-    
+
     double distance(const Point& p1, const Point& p2) {
         return std::sqrt((p2.x_ - p1.x_)*(p2.x_ - p1.x_) + (p2.y_ - p1.y_)*(p2.y_ - p1.y_));
     }
-    
+
     double triangleArea(const Point& p1, const Point& p2, const Point& p3) {
         double a = distance(p2, p3);
         double b = distance(p1, p3);
