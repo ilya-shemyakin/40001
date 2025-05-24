@@ -149,7 +149,15 @@ void Shapes::echo(const Wrapper& wrapper) {
 }
 
 void Shapes::inFrame(const Wrapper& wrapper) {
-    Polygon workShape = parseShape(wrapper);
+    Polygon workShape;
+    try {
+        workShape = parseShape(wrapper);
+    } catch (const workable::ShapeError& e) {
+        wrapper.cout << e.what() << std::endl;
+        std::string dummy;
+        std::getline(wrapper.cin, dummy);
+        return;
+    }
     if (workShape.points.size() == 0) {
         wrapper.cout << "<FALSE>" << std::endl;
         return;
@@ -179,6 +187,8 @@ double Shapes::getPolygonArea(const Polygon& shape) {
 void Shapes::area(const Wrapper& wrapper) {
     if (shapes.size() == 0) {
         wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+        std::string dummy;
+        std::getline(wrapper.cin, dummy);
         return;
     }
     std::ostream::sentry sentry(wrapper.cout);
