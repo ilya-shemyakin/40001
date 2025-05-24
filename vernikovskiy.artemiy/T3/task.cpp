@@ -51,6 +51,11 @@ void Shapes::processCommand(const Wrapper& wrapper) {
     while (!wrapper.cin.eof()) {
         std::string command;
         if (!(wrapper.cin >> command)) {
+            std::cout << ERROR_INVALID_COMMAND << std::endl;
+            return;
+        }
+        if (shapes.size() == 0) {
+            std::cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
         auto func = functionMap.find(command);
