@@ -198,6 +198,7 @@ double Shapes::getPolygonArea(const Polygon& shape) {
     for (int i = 1; i < shape.points.size() - 1; i++) {
         area += (triangleArea(shape.points[0], shape.points[i], shape.points[i+1]));
     }
+    std::cout << "GET POLYGON AREA " << area << std::endl;
     return abs(area);
 }
 
@@ -212,12 +213,14 @@ void Shapes::area(const Wrapper& wrapper) {
     const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
         {"EVEN", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
+                std::cout << "LAMBDA EVEN " << sum << std::endl;
                 return (a.points.size() % 2 == 1) ? sum + getPolygonArea(a) : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
         }},
         {"ODD", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
+                std::cout << "LAMBDA ODD " << sum << std::endl;
                 return (a.points.size() % 2 == 0) ? sum + getPolygonArea(a) : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
