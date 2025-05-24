@@ -1,4 +1,6 @@
 #include "task.h"
+#include "ScopeGuard.h"
+#include <iomanip>
 
 namespace doomsday
 {
@@ -202,132 +204,146 @@ double Shapes::getPolygonArea(const Polygon& shape) {
 }
 
 void Shapes::area(const Wrapper& wrapper) {
-    double res = 0;
-    std::string param;
-    if (!(wrapper.cin >> param)) {
-        wrapper.cout << 0 << std::endl;
-        return;
-    }
-
-    const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
-        {"EVEN", []() {
-            auto sumLambda = [](double sum, const Polygon& a) {
-                return (a.points.size() % 2 == 0) ? sum + getPolygonArea(a) : sum;
-            };
-            return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
-        }},
-        {"ODD", []() {
-            auto sumLambda = [](double sum, const Polygon& a) {
-                return (a.points.size() % 2 == 1) ? sum + getPolygonArea(a) : sum;
-            };
-            return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
-        }},
-        {"MEAN", []() {
-            if (shapes.empty()) return 0.0;
-            auto sumLambda = [](double sum, const Polygon& a) {
-                return sum + getPolygonArea(a);
-            };
-            double total = std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
-            return total / shapes.size();
-        }}
-    };
-
-    try {
-        size_t numVerts = std::stoi(param);
-        auto countLambda = [numVerts](double sum, const Polygon& a) {
-            return (a.points.size() == numVerts) ? sum + 1 : sum;
-        };
-        res = std::accumulate(shapes.begin(), shapes.end(), 0.0, countLambda);
-        wrapper.cout << res << std::endl;
-        return;
-    } catch (const std::invalid_argument&) {
-        auto it = commandFuncs.find(param);
-        if (it != commandFuncs.end()) {
-            res = it->second();
-            wrapper.cout << res << std::endl;
+    std::ostream::sentry sentry(wrapper.cout);
+    if (sentry) {
+        StreamGuard guard(wrapper.cout);
+        double res = 0;
+        std::string param;
+        if (!(wrapper.cin >> param)) {
+            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
             return;
         }
-        wrapper.cout << 0 << std::endl;
-        return;
+
+        const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
+            {"EVEN", []() {
+                auto sumLambda = [](double sum, const Polygon& a) {
+                    return (a.points.size() % 2 == 0) ? sum + getPolygonArea(a) : sum;
+                };
+                return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
+            }},
+            {"ODD", []() {
+                auto sumLambda = [](double sum, const Polygon& a) {
+                    return (a.points.size() % 2 == 1) ? sum + getPolygonArea(a) : sum;
+                };
+                return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
+            }},
+            {"MEAN", []() {
+                if (shapes.empty()) return 0.0;
+                auto sumLambda = [](double sum, const Polygon& a) {
+                    return sum + getPolygonArea(a);
+                };
+                double total = std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
+                return total / shapes.size();
+            }}
+        };
+
+
+
+        try {
+            size_t numVerts = std::stoi(param);
+            auto countLambda = [numVerts](double sum, const Polygon& a) {
+                return (a.points.size() == numVerts) ? sum + 1 : sum;
+            };
+            res = std::accumulate(shapes.begin(), shapes.end(), 0.0, countLambda);
+            wrapper.cout << std::fixed << std::setprecision(1) << res << std::endl;
+            return;
+        } catch (const std::invalid_argument&) {
+            auto it = commandFuncs.find(param);
+            if (it != commandFuncs.end()) {
+                res = it->second();
+                wrapper.cout << std::fixed << std::setprecision(1) << res << std::endl;
+                return;
+            }
+            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+            return;
+        }
     }
 }
 
 void Shapes::max(const Wrapper& wrapper) {
-    std::string param;
-    if (!(wrapper.cin >> param)) {
-        wrapper.cout << 0 << std::endl;
-        return;
+    std::ostream::sentry sentry(wrapper.cout);
+    if (sentry) {
+        StreamGuard guard(wrapper.cout);
+        std::string param;
+        if (!(wrapper.cin >> param)) {
+            wrapper.cout << 0 << std::endl;
+            return;
+        }
+
+        const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
+            {"AREA", [](const Polygon& p) { return getPolygonArea(p); }},
+            {"VERTEXES", [](const Polygon& p) { return p.points.size(); }}
+        };
+
+        const std::unordered_map<std::string, std::function<bool(const Polygon&, const Polygon&)>> comparators = {
+            {"AREA", [](const Polygon& p1, const Polygon& p2) {
+                return getPolygonArea(p1) < getPolygonArea(p2);
+            }},
+            {"VERTEXES", [](const Polygon& p1, const Polygon& p2) {
+                return p1.points.size() < p2.points.size();
+            }}
+        };
+
+        auto comp_it = comparators.find(param);
+        auto extract_it = extractors.find(param);
+
+        if (comp_it == comparators.end() || extract_it == extractors.end()) {
+            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+            return;
+        }
+
+        auto comp = comp_it->second;
+        auto maxIt = std::max_element(shapes.begin(), shapes.end(), comp);
+        if (maxIt == shapes.end()) {
+            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+            return;
+        }
+
+        wrapper.cout << std::fixed << std::setprecision(1) << extract_it->second(*maxIt) << std::endl;
     }
-
-    const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
-        {"AREA", [](const Polygon& p) { return getPolygonArea(p); }},
-        {"VERTEXES", [](const Polygon& p) { return static_cast<double>(p.points.size()); }}
-    };
-
-    const std::unordered_map<std::string, std::function<bool(const Polygon&, const Polygon&)>> comparators = {
-        {"AREA", [](const Polygon& p1, const Polygon& p2) {
-            return getPolygonArea(p1) < getPolygonArea(p2);
-        }},
-        {"VERTEXES", [](const Polygon& p1, const Polygon& p2) {
-            return p1.points.size() < p2.points.size();
-        }}
-    };
-
-    auto comp_it = comparators.find(param);
-    auto extract_it = extractors.find(param);
-
-    if (comp_it == comparators.end() || extract_it == extractors.end()) {
-        wrapper.cout << 0 << std::endl;
-        return;
-    }
-
-    auto comp = comp_it->second;
-    auto maxIt = std::max_element(shapes.begin(), shapes.end(), comp);
-    if (maxIt == shapes.end()) {
-        wrapper.cout << 0 << std::endl;
-        return;
-    }
-
-    wrapper.cout << extract_it->second(*maxIt) << std::endl;
 }
 
 void Shapes::min(const Wrapper& wrapper) {
-    std::string param;
-    if (!(wrapper.cin >> param)) {
-        wrapper.cout << 0 << std::endl;
-        return;
+    std::ostream::sentry sentry(wrapper.cout);
+    if (sentry) {
+        StreamGuard guard(wrapper.cout);
+        std::string param;
+        if (!(wrapper.cin >> param)) {
+            wrapper.cout << 0 << std::endl;
+            return;
+        }
+
+        const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
+            {"AREA", [](const Polygon& p) { return getPolygonArea(p); }},
+            {"VERTEXES", [](const Polygon& p) { return p.points.size(); }}
+        };
+
+        const std::unordered_map<std::string, std::function<bool(const Polygon&, const Polygon&)>> comparators = {
+            {"AREA", [](const Polygon& p1, const Polygon& p2) {
+                return getPolygonArea(p1) < getPolygonArea(p2);
+            }},
+            {"VERTEXES", [](const Polygon& p1, const Polygon& p2) {
+                return p1.points.size() < p2.points.size();
+            }}
+        };
+
+        auto comp_it = comparators.find(param);
+        auto extract_it = extractors.find(param);
+
+        if (comp_it == comparators.end() || extract_it == extractors.end()) {
+            wrapper.cout << 0 << std::endl;
+            return;
+        }
+
+        auto comp = comp_it->second;
+        auto minIt = std::min_element(shapes.begin(), shapes.end(), comp);
+        if (minIt == shapes.end()) {
+            wrapper.cout << 0 << std::endl;
+            return;
+        }
+
+        wrapper.cout << std::fixed << std::setprecision(1) << extract_it->second(*minIt) << std::endl;
     }
-
-    const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
-        {"AREA", [](const Polygon& p) { return getPolygonArea(p); }},
-        {"VERTEXES", [](const Polygon& p) { return static_cast<double>(p.points.size()); }}
-    };
-
-    const std::unordered_map<std::string, std::function<bool(const Polygon&, const Polygon&)>> comparators = {
-        {"AREA", [](const Polygon& p1, const Polygon& p2) {
-            return getPolygonArea(p1) > getPolygonArea(p2);
-        }},
-        {"VERTEXES", [](const Polygon& p1, const Polygon& p2) {
-            return p1.points.size() > p2.points.size();
-        }}
-    };
-
-    auto comp_it = comparators.find(param);
-    auto extract_it = extractors.find(param);
-
-    if (comp_it == comparators.end() || extract_it == extractors.end()) {
-        wrapper.cout << 0 << std::endl;
-        return;
-    }
-
-    auto comp = comp_it->second;
-    auto minIt = std::min_element(shapes.begin(), shapes.end(), comp);
-    if (minIt == shapes.end()) {
-        wrapper.cout << 0 << std::endl;
-        return;
-    }
-
-    wrapper.cout << extract_it->second(*minIt) << std::endl;
 }
 
 void Shapes::count(const Wrapper& wrapper) {
