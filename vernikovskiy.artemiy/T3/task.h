@@ -37,13 +37,14 @@ namespace doomsday
     private:
         static std::vector< Polygon > shapes;
         static constexpr std::string_view ERROR_INVALID_COMMAND = "<INVALID COMMAND>";
-        using FunctionVariant = std::variant<
-            std::function<unsigned int(const Wrapper& wrapper)>,
-            std::function<bool(const Wrapper& wrapper)>,
-            std::function<double(const Wrapper& wrapper)>,
-            std::function<void(const Wrapper&)>
-        >; // no variant, use only std::function<void(const Wrapper&)>
-        std::map<std::string, FunctionVariant> functionMap;
+/*        using FunctionVariant = std::variant<*/
+/*            std::function<unsigned int(const Wrapper& wrapper)>,*/
+/*            std::function<bool(const Wrapper& wrapper)>,*/
+/*            std::function<double(const Wrapper& wrapper)>,*/
+/*            std::function<void(const Wrapper&)>*/
+/*        >; // no variant, use only std::function<void(const Wrapper&)>*/
+        //std::map<std::string, FunctionVariant> functionMap;
+        std::map<std::string, std::function<void(const Wrapper& wrapper)>> functionMap;
 
         static Point parsePoint(const Wrapper& wrapper);
         Point parsePoint(std::ifstream& ifStream);
@@ -51,12 +52,13 @@ namespace doomsday
         static double getPolygonArea(const Polygon& shape);
         static Polygon parseShape(const Wrapper& wrapper);
         Polygon parseShape(std::ifstream& ifStream);
-        static unsigned int echo(const Wrapper& wrapper);
-        static bool inFrame(const Wrapper& wrapper);
-        static double area(const Wrapper& wrapper);
-        static double max(const Wrapper& wrapper);
-        static double min(const Wrapper& wrapper);
-        static double count(const Wrapper& wrapper);
+
+        static void echo(const Wrapper& wrapper);
+        static void inFrame(const Wrapper& wrapper);
+        static void area(const Wrapper& wrapper);
+        static void max(const Wrapper& wrapper);
+        static void min(const Wrapper& wrapper);
+        static void count(const Wrapper& wrapper);
         static bool isShapeExist(const Polygon& shape);
 
 

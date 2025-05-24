@@ -4,42 +4,46 @@ namespace doomsday
 {
 std::vector<Polygon> Shapes::shapes;
 Shapes::Shapes() {
-    functionMap["ECHO"] = std::function<unsigned int(const Wrapper&)>(echo);
-    functionMap["INFRAME"] = std::function<bool(const Wrapper&)>(inFrame);
-    functionMap["MIN"] = std::function<double(const Wrapper&)>(min);
-    functionMap["MAX"] = std::function<double(const Wrapper&)>(max);
-    functionMap["AREA"] = std::function<double(const Wrapper&)>(area);
-    functionMap["COUNT"] = std::function<double(const Wrapper&)>(count);
+    functionMap["ECHO"] = std::function<void(const Wrapper&)>(echo);
+    functionMap["INFRAME"] = std::function<void(const Wrapper&)>(inFrame);
+    functionMap["MIN"] = std::function<void(const Wrapper&)>(min);
+    functionMap["MAX"] = std::function<void(const Wrapper&)>(max);
+    functionMap["AREA"] = std::function<void(const Wrapper&)>(area);
+    functionMap["COUNT"] = std::function<void(const Wrapper&)>(count);
 }
 
-using FunctionVariant = std::variant<
-    std::function<unsigned int(const Wrapper& wrapper)>,
-    std::function<bool(const Wrapper& wrapper)>,
-    std::function<double(const Wrapper& wrapper)>,
-    std::function<void(const Wrapper&)>
->;
+//using FunctionVariant = std::variant<
+//    std::function<unsigned int(const Wrapper& wrapper)>,
+//    std::function<bool(const Wrapper& wrapper)>,
+//    std::function<double(const Wrapper& wrapper)>,
+//    std::function<void(const Wrapper&)>
+//>;
 
-void invokeFunction(const FunctionVariant& variant_value, const Wrapper& wrapper) {
-    if (std::holds_alternative<std::function<void(const Wrapper&)>>(variant_value)) {
-        auto& func = std::get<std::function<void(const Wrapper&)>>(variant_value);
-        func(wrapper);
-    }
-    else if (std::holds_alternative<std::function<unsigned int(const Wrapper&)>>(variant_value)) {
-        auto& func = std::get<std::function<unsigned int(const Wrapper&)>>(variant_value);
-        unsigned int result = func(wrapper);
-        std::cout << result << std::endl;
-    }
-    else if (std::holds_alternative<std::function<bool(const Wrapper&)>>(variant_value)) {
-        auto& func = std::get<std::function<bool(const Wrapper&)>>(variant_value);
-        bool result = func(wrapper);
-        std::cout << std::boolalpha << result << std::endl;
-    }
-    else if (std::holds_alternative<std::function<double(const Wrapper&)>>(variant_value)) {
-        auto& func = std::get<std::function<double(const Wrapper&)>>(variant_value);
-        double result = func(wrapper);
-        std::cout << result << std::endl;
-    }
-}
+//void invokeFunction(const FunctionVariant& variant_value, const Wrapper& wrapper) {
+////    if (std::holds_alternative<std::function<void(const Wrapper&)>>(variant_value)) {
+////        auto& func = std::get<std::function<void(const Wrapper&)>>(variant_value);
+////        func(wrapper);
+////    }
+////    else if (std::holds_alternative<std::function<unsigned int(const Wrapper&)>>(variant_value)) {
+////        auto& func = std::get<std::function<unsigned int(const Wrapper&)>>(variant_value);
+////        unsigned int result = func(wrapper);
+////        std::cout << result << std::endl;
+////    }
+////    else if (std::holds_alternative<std::function<bool(const Wrapper&)>>(variant_value)) {
+////        auto& func = std::get<std::function<bool(const Wrapper&)>>(variant_value);
+////        bool result = func(wrapper);
+////        std::cout << std::boolalpha << result << std::endl;
+////    }
+////    else if (std::holds_alternative<std::function<double(const Wrapper&)>>(variant_value)) {
+////        auto& func = std::get<std::function<double(const Wrapper&)>>(variant_value);
+////        double result = func(wrapper);
+////        std::cout << result << std::endl;
+////    }
+//    if (std::holds_alternative<std::function<void(const Wrapper&)>>(variant_value)) {
+//        auto& func = std::get<std::function<void(const Wrapper&)>>(variant_value);
+//        func(wrapper);
+//    }
+//}
 
 void Shapes::processCommand(const Wrapper& wrapper) {
     while (!wrapper.cin.eof()) {
@@ -49,7 +53,9 @@ void Shapes::processCommand(const Wrapper& wrapper) {
         }
         auto func = functionMap.find(command);
         if (func != functionMap.end()) {
-            invokeFunction(func->second, wrapper);
+            //auto& func = std::get<std::function<void(const Wrapper&)>>(void);
+            func->second(wrapper);
+            //invokeFunction(func->second, wrapper);
         } else {
             std::cout << ERROR_INVALID_COMMAND << std::endl;
         }
@@ -149,10 +155,11 @@ bool Shapes::isShapeExist(const Polygon& shape) {
     return (std::find(shapes.begin(), shapes.end(), shape) != shapes.end());
 }
 
-unsigned int Shapes::echo(const Wrapper& wrapper) {
+void Shapes::echo(const Wrapper& wrapper) {
     Polygon workShape = parseShape(wrapper);
     if (workShape.points.size() == 0) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
     std::vector<decltype(shapes.begin())> tmp;
     for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) { // std::find
@@ -163,22 +170,24 @@ unsigned int Shapes::echo(const Wrapper& wrapper) {
     for (auto pos : tmp) {
         shapes.insert(pos, workShape);
     }
-    return tmp.size();
+    wrapper.cout << tmp.size() << std::endl;
 }
 
-bool Shapes::inFrame(const Wrapper& wrapper) {
+void Shapes::inFrame(const Wrapper& wrapper) {
     Polygon workShape = parseShape(wrapper);
     if (workShape.points.size() == 0) {
-        return false;
+        wrapper.cout << std::boolalpha << false << std::endl;
+        return;
     }
     Polygon rect = buildFrame();
     for (auto& point : workShape.points)
     {
         if (!(rect.points[0] < point && rect.points[1] > point)) {
-            return false;
+            wrapper.cout << std::boolalpha << false << std::endl;
+            return;
         }
     }
-    return true;
+    wrapper.cout << std::boolalpha << true << std::endl;
 }
 
 double Shapes::getPolygonArea(const Polygon& shape) {
@@ -187,17 +196,17 @@ double Shapes::getPolygonArea(const Polygon& shape) {
     }
     double area = 0.0;
     for (int i = 1; i < shape.points.size() - 1; i++) {
-        area += (triangleArea(shape.points[0], shape.points[i], shape.points[i+1])); // or vice versa +-
+        area += (triangleArea(shape.points[0], shape.points[i], shape.points[i+1]));
     }
-    // std::cout << area << std::endl;
     return abs(area);
 }
 
-double Shapes::area(const Wrapper& wrapper) {
+void Shapes::area(const Wrapper& wrapper) {
     double res = 0;
     std::string param;
     if (!(wrapper.cin >> param)) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
     const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
@@ -229,21 +238,25 @@ double Shapes::area(const Wrapper& wrapper) {
             return (a.points.size() == numVerts) ? sum + 1 : sum;
         };
         res = std::accumulate(shapes.begin(), shapes.end(), 0.0, countLambda);
-        return res;
+        wrapper.cout << res << std::endl;
+        return;
     } catch (const std::invalid_argument&) {
         auto it = commandFuncs.find(param);
         if (it != commandFuncs.end()) {
             res = it->second();
-            return res;
+            wrapper.cout << res << std::endl;
+            return;
         }
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 }
 
-double Shapes::max(const Wrapper& wrapper) {
+void Shapes::max(const Wrapper& wrapper) {
     std::string param;
     if (!(wrapper.cin >> param)) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
     const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
@@ -264,22 +277,25 @@ double Shapes::max(const Wrapper& wrapper) {
     auto extract_it = extractors.find(param);
 
     if (comp_it == comparators.end() || extract_it == extractors.end()) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
     auto comp = comp_it->second;
     auto maxIt = std::max_element(shapes.begin(), shapes.end(), comp);
     if (maxIt == shapes.end()) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
-    return extract_it->second(*maxIt);
+    wrapper.cout << extract_it->second(*maxIt) << std::endl;
 }
 
-double Shapes::min(const Wrapper& wrapper) {
+void Shapes::min(const Wrapper& wrapper) {
     std::string param;
     if (!(wrapper.cin >> param)) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
     const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
@@ -300,23 +316,26 @@ double Shapes::min(const Wrapper& wrapper) {
     auto extract_it = extractors.find(param);
 
     if (comp_it == comparators.end() || extract_it == extractors.end()) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
     auto comp = comp_it->second;
     auto minIt = std::min_element(shapes.begin(), shapes.end(), comp);
     if (minIt == shapes.end()) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
-    return extract_it->second(*minIt);
+    wrapper.cout << extract_it->second(*minIt) << std::endl;
 }
 
-double Shapes::count(const Wrapper& wrapper) {
+void Shapes::count(const Wrapper& wrapper) {
     double res = 0;
     std::string param;
     if (!(wrapper.cin >> param)) {
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 
     const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
@@ -340,14 +359,17 @@ double Shapes::count(const Wrapper& wrapper) {
             return (a.points.size() == numVerts) ? sum + 1 : sum;
         };
         res = std::accumulate(shapes.begin(), shapes.end(), 0.0, countLambda);
-        return res;
+        wrapper.cout << res << std::endl;
+        return;
     } catch (const std::invalid_argument&) {
         auto it = commandFuncs.find(param);
         if (it != commandFuncs.end()) {
             res = it->second();
-            return res;
+            wrapper.cout << res << std::endl;
+            return;
         }
-        return 0;
+        wrapper.cout << 0 << std::endl;
+        return;
     }
 }
 
