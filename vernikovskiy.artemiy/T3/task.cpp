@@ -212,13 +212,13 @@ void Shapes::area(const Wrapper& wrapper) {
     const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
         {"EVEN", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
-                return (a.points.size() % 2 == 1) ? sum + getPolygonArea(a) : sum;
+                return (a.points.size() % 2 == 0) ? sum + getPolygonArea(a) : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
         }},
         {"ODD", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
-                return (a.points.size() % 2 == 0) ? sum + getPolygonArea(a) : sum;
+                return (a.points.size() % 2 == 1) ? sum + getPolygonArea(a) : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
         }},
@@ -341,13 +341,13 @@ void Shapes::count(const Wrapper& wrapper) {
     const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
         {"EVEN", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
-                return (a.points.size() % 2 == 1) ? sum + 1 : sum;
+                return (a.points.size() % 2 == 0) ? sum + 1 : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
         }},
         {"ODD", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
-                return (a.points.size() % 2 == 0) ? sum + 1 : sum;
+                return (a.points.size() % 2 == 1) ? sum + 1 : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
         }}
