@@ -205,6 +205,10 @@ double Shapes::getPolygonArea(const Polygon& shape) {
 }
 
 void Shapes::area(const Wrapper& wrapper) {
+    if (shapes.size() == 0) {
+        wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+        return;
+    }
     std::ostream::sentry sentry(wrapper.cout);
     if (sentry) {
         StreamGuard guard(wrapper.cout);
