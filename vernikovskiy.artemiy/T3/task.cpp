@@ -14,55 +14,49 @@ Shapes::Shapes() {
     functionMap["COUNT"] = std::function<void(const Wrapper&)>(count);
 }
 
-//using FunctionVariant = std::variant<
-//    std::function<unsigned int(const Wrapper& wrapper)>,
-//    std::function<bool(const Wrapper& wrapper)>,
-//    std::function<double(const Wrapper& wrapper)>,
-//    std::function<void(const Wrapper&)>
-//>;
-
-//void invokeFunction(const FunctionVariant& variant_value, const Wrapper& wrapper) {
-////    if (std::holds_alternative<std::function<void(const Wrapper&)>>(variant_value)) {
-////        auto& func = std::get<std::function<void(const Wrapper&)>>(variant_value);
-////        func(wrapper);
-////    }
-////    else if (std::holds_alternative<std::function<unsigned int(const Wrapper&)>>(variant_value)) {
-////        auto& func = std::get<std::function<unsigned int(const Wrapper&)>>(variant_value);
-////        unsigned int result = func(wrapper);
-////        std::cout << result << std::endl;
-////    }
-////    else if (std::holds_alternative<std::function<bool(const Wrapper&)>>(variant_value)) {
-////        auto& func = std::get<std::function<bool(const Wrapper&)>>(variant_value);
-////        bool result = func(wrapper);
-////        std::cout << std::boolalpha << result << std::endl;
-////    }
-////    else if (std::holds_alternative<std::function<double(const Wrapper&)>>(variant_value)) {
-////        auto& func = std::get<std::function<double(const Wrapper&)>>(variant_value);
-////        double result = func(wrapper);
-////        std::cout << result << std::endl;
-////    }
-//    if (std::holds_alternative<std::function<void(const Wrapper&)>>(variant_value)) {
-//        auto& func = std::get<std::function<void(const Wrapper&)>>(variant_value);
-//        func(wrapper);
-//    }
-//}
 
 void Shapes::processCommand(const Wrapper& wrapper) {
     while (!wrapper.cin.eof()) {
         std::string command;
         if (!(wrapper.cin >> command)) {
-            //std::cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
         auto func = functionMap.find(command);
         if (func != functionMap.end()) {
-            //auto& func = std::get<std::function<void(const Wrapper&)>>(void);
             func->second(wrapper);
-            //invokeFunction(func->second, wrapper);
         } else {
             std::cout << ERROR_INVALID_COMMAND << std::endl;
         }
     }
+}
+
+Point Shapes::parsePoint(std::ifstream& ifStream) {
+    int x, y;
+    if (!(ifStream >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
+    {
+        if (!ifStream.eof() && !ifStream.bad()) {
+            ifStream.clear();
+        }
+        throw ShapeError(ERROR_INVALID_COMMAND);
+    }
+
+    return Point(x, y);
+}
+
+Polygon Shapes::parseShape(std::ifstream& ifStream) {
+    int dots = 0;
+    if (!(ifStream >> dots)) {
+        throw ShapeError(ERROR_INVALID_COMMAND);
+    }
+    if (dots <= 2) {
+        throw ShapeError(ERROR_INVALID_COMMAND);
+    }
+    Polygon shape;
+    for (int i = 0; i < dots; i++)
+    {
+        shape.points.push_back(parsePoint(ifStream));
+    }
+    return shape;
 }
 
 Polygon Shapes::buildFrame() {
@@ -87,69 +81,39 @@ Point Shapes::parsePoint(const Wrapper& wrapper) {
     int x, y;
     if (!(wrapper.cin >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
     {
-        std::cout << ERROR_INVALID_COMMAND << std::endl;
-        std::cout << wrapper.cin.fail() << std::endl;
         if (!wrapper.cin.eof() && !wrapper.cin.bad()) {
             wrapper.cin.clear();
         }
+        throw ShapeError(ERROR_INVALID_COMMAND);
     }
 
     return Point(x, y);
-}
-
-Point Shapes::parsePoint(std::ifstream& ifStream) {
-    int x, y;
-    if (!(ifStream >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
-    {
-        std::cout << ERROR_INVALID_COMMAND << std::endl;
-        std::cout << ifStream.fail() << std::endl;
-        if (!ifStream.eof() && !ifStream.bad()) {
-            ifStream.clear();
-        }
-    }
-
-    return Point(x, y);
-}
-
-Polygon Shapes::parseShape(std::ifstream& ifStream) {
-    int dots = 0;
-    if (!(ifStream >> dots)) {
-        return Polygon();
-    }
-    if (dots <= 2) {
-        std::cout << ERROR_INVALID_COMMAND << std::endl;
-        return Polygon();
-    }
-    Polygon shape;
-    for (int i = 0; i < dots; i++)
-    {
-        shape.points.push_back(parsePoint(ifStream));
-    }
-    return shape;
 }
 
 Polygon Shapes::parseShape(const Wrapper& wrapper) {
     int dots = 0;
     if (!(wrapper.cin >> dots)) {
-        return Polygon();
+        throw ShapeError(ERROR_INVALID_COMMAND);
     }
     if (dots <= 2) {
-        std::cout << ERROR_INVALID_COMMAND << std::endl;
-        return Polygon();
+        throw ShapeError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
-    for (int i = 0; i < dots; i++)
-    {
+    for (int i = 0; i < dots; i++) {
         shape.points.push_back(parsePoint(wrapper));
     }
+
     return shape;
 }
 
 void Shapes::addShape(std::ifstream& ifStream) {
     while (!ifStream.eof()) {
-        Polygon shape = parseShape(ifStream);
-        if (shape.points.size() != 0) {
+        try {
+            Polygon shape = parseShape(ifStream);
             shapes.push_back(shape);
+        } catch (const workable::ShapeError& e) {
+            std::string fummy;
+            std::getline(ifStream, fummy);
         }
     }
 }
@@ -159,38 +123,46 @@ bool Shapes::isShapeExist(const Polygon& shape) {
 }
 
 void Shapes::echo(const Wrapper& wrapper) {
-    Polygon workShape = parseShape(wrapper);
-    if (workShape.points.size() == 0) {
-        wrapper.cout << 0 << std::endl;
+    Polygon workShape;
+    try {
+        workShape = parseShape(wrapper);
+    } catch (const workable::ShapeError& e) {
+        wrapper.cout << e.what() << std::endl;
+        std::string dummy;
+        std::getline(wrapper.cin, dummy);
         return;
     }
-    std::vector<decltype(shapes.begin())> tmp;
-    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) { // std::find
-        if (workShape == *shapeit) {
-            tmp.push_back(shapeit + 1);
+    if (workShape.points.size() == 0) {
+        return;
+    }
+    auto shapeIt = shapes.begin();
+    size_t echoCount = 0;
+    while (shapeIt != shapes.end()) {
+        shapeIt = std::find(shapeIt, shapes.end(), workShape);
+        if (shapeIt != shapes.end()) {
+            shapes.insert(++shapeIt, workShape);
+            ++shapeIt;
+            echoCount++;
         }
     }
-    for (auto pos : tmp) {
-        shapes.insert(pos, workShape);
-    }
-    wrapper.cout << tmp.size() << std::endl;
+    wrapper.cout << echoCount << std::endl;
 }
 
 void Shapes::inFrame(const Wrapper& wrapper) {
     Polygon workShape = parseShape(wrapper);
     if (workShape.points.size() == 0) {
-        wrapper.cout << std::boolalpha << false << std::endl;
+        wrapper.cout << "<FALSE>" << std::endl;
         return;
     }
     Polygon rect = buildFrame();
     for (auto& point : workShape.points)
     {
         if (!(rect.points[0] < point && rect.points[1] > point)) {
-            wrapper.cout << std::boolalpha << false << std::endl;
+            wrapper.cout << "<FALSE>" << std::endl;
             return;
         }
     }
-    wrapper.cout << std::boolalpha << true << std::endl;
+    wrapper.cout << "<TRUE>" << std::endl;
 }
 
 double Shapes::getPolygonArea(const Polygon& shape) {
@@ -320,7 +292,6 @@ void Shapes::min(const Wrapper& wrapper) {
         StreamGuard guard(wrapper.cout);
         std::string param;
         if (!(wrapper.cin >> param)) {
-            wrapper.cout << 0 << std::endl;
             return;
         }
 

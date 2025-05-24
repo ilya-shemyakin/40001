@@ -2,6 +2,9 @@
 
 namespace workable
 {
+    const char* ShapeError::what() const noexcept {
+        return msg_.c_str();
+    }
     std::istream& operator>>(std::istream& is, DelimiterIO&& dest)
     {
         std::istream::sentry sentry(is);

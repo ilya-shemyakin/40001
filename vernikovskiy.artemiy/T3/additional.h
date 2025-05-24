@@ -7,6 +7,14 @@
 
 namespace workable
 {
+    class ShapeError : public std::exception {
+    public:
+        explicit ShapeError(const std::string& message) : msg_(message) {}
+        virtual const char* what() const noexcept override;
+    private:
+        std::string msg_;
+    };
+
     struct Wrapper {
         std::istream& cin;
         std::ostream& cout;
