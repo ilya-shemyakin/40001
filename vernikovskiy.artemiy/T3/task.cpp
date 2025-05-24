@@ -210,7 +210,7 @@ void Shapes::area(const Wrapper& wrapper) {
         double res = 0;
         std::string param;
         if (!(wrapper.cin >> param)) {
-            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
 
@@ -237,8 +237,6 @@ void Shapes::area(const Wrapper& wrapper) {
             }}
         };
 
-
-
         try {
             size_t numVerts = std::stoi(param);
             auto countLambda = [numVerts](double sum, const Polygon& a) {
@@ -254,7 +252,7 @@ void Shapes::area(const Wrapper& wrapper) {
                 wrapper.cout << std::fixed << std::setprecision(1) << res << std::endl;
                 return;
             }
-            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
     }
@@ -266,12 +264,15 @@ void Shapes::max(const Wrapper& wrapper) {
         StreamGuard guard(wrapper.cout);
         std::string param;
         if (!(wrapper.cin >> param)) {
-            wrapper.cout << 0 << std::endl;
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
 
         const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
-            {"AREA", [](const Polygon& p) { return getPolygonArea(p); }},
+            {"AREA", [](const Polygon& p) {
+                std::cout << std::fixed << std::setprecision(1);
+                return getPolygonArea(p);
+            }},
             {"VERTEXES", [](const Polygon& p) { return p.points.size(); }}
         };
 
@@ -284,22 +285,22 @@ void Shapes::max(const Wrapper& wrapper) {
             }}
         };
 
-        auto comp_it = comparators.find(param);
-        auto extract_it = extractors.find(param);
+        auto compIt = comparators.find(param);
+        auto extractIt = extractors.find(param);
 
-        if (comp_it == comparators.end() || extract_it == extractors.end()) {
-            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+        if (compIt == comparators.end() || extractIt == extractors.end()) {
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
 
-        auto comp = comp_it->second;
+        auto comp = compIt->second;
         auto maxIt = std::max_element(shapes.begin(), shapes.end(), comp);
         if (maxIt == shapes.end()) {
-            wrapper.cout << std::fixed << std::setprecision(1) << 0 << std::endl;
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
 
-        wrapper.cout << std::fixed << std::setprecision(1) << extract_it->second(*maxIt) << std::endl;
+        wrapper.cout << extractIt->second(*maxIt) << std::endl;
     }
 }
 
@@ -314,7 +315,10 @@ void Shapes::min(const Wrapper& wrapper) {
         }
 
         const std::unordered_map<std::string, std::function<double(const Polygon&)>> extractors = {
-            {"AREA", [](const Polygon& p) { return getPolygonArea(p); }},
+            {"AREA", [](const Polygon& p) {
+                std::cout << std::fixed << std::setprecision(1);
+                return getPolygonArea(p);
+            }},
             {"VERTEXES", [](const Polygon& p) { return p.points.size(); }}
         };
 
@@ -327,22 +331,22 @@ void Shapes::min(const Wrapper& wrapper) {
             }}
         };
 
-        auto comp_it = comparators.find(param);
-        auto extract_it = extractors.find(param);
+        auto compIt = comparators.find(param);
+        auto extractIt = extractors.find(param);
 
-        if (comp_it == comparators.end() || extract_it == extractors.end()) {
-            wrapper.cout << 0 << std::endl;
+        if (compIt == comparators.end() || extractIt == extractors.end()) {
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
 
-        auto comp = comp_it->second;
+        auto comp = compIt->second;
         auto minIt = std::min_element(shapes.begin(), shapes.end(), comp);
         if (minIt == shapes.end()) {
-            wrapper.cout << 0 << std::endl;
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
 
-        wrapper.cout << std::fixed << std::setprecision(1) << extract_it->second(*minIt) << std::endl;
+        wrapper.cout << std::fixed << std::setprecision(1) << extractIt->second(*minIt) << std::endl;
     }
 }
 
@@ -350,7 +354,7 @@ void Shapes::count(const Wrapper& wrapper) {
     double res = 0;
     std::string param;
     if (!(wrapper.cin >> param)) {
-        wrapper.cout << 0 << std::endl;
+        wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
         return;
     }
 
@@ -384,7 +388,7 @@ void Shapes::count(const Wrapper& wrapper) {
             wrapper.cout << res << std::endl;
             return;
         }
-        wrapper.cout << 0 << std::endl;
+        wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
         return;
     }
 }
