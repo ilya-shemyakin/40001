@@ -195,11 +195,10 @@ double Shapes::getPolygonArea(const Polygon& shape) {
         return 0;
     }
     double area = 0.0;
-    for (int i = 1; i < shape.points.size() - 1; i++) {
+    for (size_t i = 1; i < shape.points.size() - 1; i++) {
         area += (triangleArea(shape.points[0], shape.points[i], shape.points[i+1]));
     }
-    std::cout << "GET POLYGON AREA " << area << std::endl;
-    return abs(area);
+    return area;
 }
 
 void Shapes::area(const Wrapper& wrapper) {
@@ -213,14 +212,12 @@ void Shapes::area(const Wrapper& wrapper) {
     const std::unordered_map<std::string, std::function<double()>> commandFuncs = {
         {"EVEN", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
-                std::cout << "LAMBDA EVEN " << sum << std::endl;
                 return (a.points.size() % 2 == 1) ? sum + getPolygonArea(a) : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
         }},
         {"ODD", []() {
             auto sumLambda = [](double sum, const Polygon& a) {
-                std::cout << "LAMBDA ODD " << sum << std::endl;
                 return (a.points.size() % 2 == 0) ? sum + getPolygonArea(a) : sum;
             };
             return std::accumulate(shapes.begin(), shapes.end(), 0.0, sumLambda);
@@ -236,7 +233,7 @@ void Shapes::area(const Wrapper& wrapper) {
     };
 
     try {
-        int numVerts = std::stoi(param);
+        size_t numVerts = std::stoi(param);
         auto countLambda = [numVerts](double sum, const Polygon& a) {
             return (a.points.size() == numVerts) ? sum + 1 : sum;
         };
@@ -357,7 +354,7 @@ void Shapes::count(const Wrapper& wrapper) {
     };
 
     try {
-        int numVerts = std::stoi(param);
+        size_t numVerts = std::stoi(param);
         auto countLambda = [numVerts](double sum, const Polygon& a) {
             return (a.points.size() == numVerts) ? sum + 1 : sum;
         };
