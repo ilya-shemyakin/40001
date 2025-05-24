@@ -54,10 +54,6 @@ void Shapes::processCommand(const Wrapper& wrapper) {
             //std::cout << ERROR_INVALID_COMMAND << std::endl;
             return;
         }
-        if (shapes.size() == 0) {
-            std::cout << ERROR_INVALID_COMMAND << std::endl;
-            return;
-        }
         auto func = functionMap.find(command);
         if (func != functionMap.end()) {
             //auto& func = std::get<std::function<void(const Wrapper&)>>(void);
@@ -243,9 +239,14 @@ void Shapes::area(const Wrapper& wrapper) {
         };
 
         try {
-            size_t numVerts = std::stoi(param);
-            auto countLambda = [numVerts](double sum, const Polygon& a) {
-                return (a.points.size() == numVerts) ? sum + 1 : sum;
+            int numVerts = std::stoi(param);
+            if (numVerts < 3) {
+                wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+                return;
+            }
+            size_t normalNumVerts = static_cast<size_t>(numVerts);
+            auto countLambda = [normalNumVerts](double sum, const Polygon& a) {
+                return (a.points.size() == normalNumVerts) ? sum + getPolygonArea(a) : sum;
             };
             res = std::accumulate(shapes.begin(), shapes.end(), 0.0, countLambda);
             wrapper.cout << std::fixed << std::setprecision(1) << res << std::endl;
@@ -379,9 +380,14 @@ void Shapes::count(const Wrapper& wrapper) {
     };
 
     try {
-        size_t numVerts = std::stoi(param);
-        auto countLambda = [numVerts](double sum, const Polygon& a) {
-            return (a.points.size() == numVerts) ? sum + 1 : sum;
+        int numVerts = std::stoi(param);
+        if (numVerts < 3) {
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+            return;
+        }
+        size_t normalNumVerts = static_cast<size_t>(numVerts);
+        auto countLambda = [normalNumVerts](double sum, const Polygon& a) {
+            return (a.points.size() == normalNumVerts) ? sum + 1 : sum;
         };
         res = std::accumulate(shapes.begin(), shapes.end(), 0.0, countLambda);
         wrapper.cout << res << std::endl;
