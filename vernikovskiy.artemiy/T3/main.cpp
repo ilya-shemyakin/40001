@@ -5,15 +5,15 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        throw std::invalid_argument("No fn");
-        return 1;
+        std::cout << "ERROR: No fn" << std::endl;
+        return 2;
     }
 
     std::string declar;
     std::ifstream file(argv[1]);
     if (!file) {
-        throw std::runtime_error("GFYS");
-        return 1;
+        std::cout << "ERROR: GFYS" << std::endl;
+        return 2;
     }
 
     doomsday::Shapes shapes;

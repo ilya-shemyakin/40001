@@ -196,12 +196,6 @@ double Shapes::getPolygonArea(const Polygon& shape) {
 }
 
 void Shapes::area(const Wrapper& wrapper) {
-    if (shapes.size() == 0) {
-        wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
-        std::string dummy;
-        std::getline(wrapper.cin, dummy);
-        return;
-    }
     std::ostream::sentry sentry(wrapper.cout);
     if (sentry) {
         StreamGuard guard(wrapper.cout);
@@ -209,6 +203,13 @@ void Shapes::area(const Wrapper& wrapper) {
         std::string param;
         if (!(wrapper.cin >> param)) {
             wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+            return;
+        }
+
+        if (shapes.size() == 0 && param == "MEAN") {
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+            std::string dummy;
+            std::getline(wrapper.cin, dummy);
             return;
         }
 
