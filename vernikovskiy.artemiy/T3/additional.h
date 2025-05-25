@@ -16,7 +16,7 @@ namespace workable
     private:
         std::string msg_;
     };
-    
+
     class DotsError : public std::exception {
     public:
         explicit DotsError(const std::string& message);
