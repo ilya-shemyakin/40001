@@ -50,7 +50,7 @@ namespace workable
         double s = (a + b + c) / 2.0;
         return std::sqrt(s * (s - a) * (s - b) * (s - c));
     }
-    
+
     std::vector<std::string> split(const std::string& declar) {
         std::vector<std::string> tokens;
         std::stringstream ss(declar);

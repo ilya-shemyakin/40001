@@ -144,11 +144,7 @@ void Shapes::addShape(std::ifstream& ifStream) {
         try {
             Polygon shape = parseShape(ifStream);
             shapes.push_back(shape);
-        } catch (const workable::ShapeError& e) {
-            std::string fummy;
-            std::getline(ifStream, fummy);
-            // std::cout << fummy << "\n";
-        }
+        } catch (const workable::ShapeError& e) {}
     }
 }
 
