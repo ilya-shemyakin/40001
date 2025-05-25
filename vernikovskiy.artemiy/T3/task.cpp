@@ -126,10 +126,10 @@ Point Shapes::parsePoint(const Wrapper& wrapper) {
 Polygon Shapes::parseShape(const Wrapper& wrapper) {
     int dots = 0;
     if (!(wrapper.cin >> dots)) {
-        throw ShapeError(ERROR_INVALID_COMMAND);
+        throw DotsError("");
     }
     if (dots <= 2) {
-        throw ShapeError(ERROR_INVALID_COMMAND);
+        throw DotsError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
 //    for (int i = 0; i < dots; i++) {
@@ -172,14 +172,16 @@ void Shapes::echo(const Wrapper& wrapper) {
         workShape = parseShape(wrapper);
     } catch (const workable::ShapeError& e) {
         wrapper.cout << e.what() << std::endl;
+        return;
+    } catch (const workable::DotsError& e) {
+        wrapper.cout << e.what() << std::endl;
         std::string dummy;
         std::getline(wrapper.cin, dummy);
         return;
     }
     if (workShape.points.size() == 0) {
         return;
-    }
-    // BANNED BY VALGRIND, BECAUSE... IDK, random bullshit go?
+    }=
     size_t echoCount = 0;
     for (auto shapeIt = shapes.begin(); shapeIt != shapes.end(); ) {
         shapeIt = std::find(shapeIt, shapes.end(), workShape);
@@ -190,17 +192,6 @@ void Shapes::echo(const Wrapper& wrapper) {
         }
     }
     wrapper.cout << echoCount << std::endl;
-//    std::vector<decltype(shapes.begin())> tmp;
-//    int i = 0;
-//    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) {
-//        if (workShape == *shapeit) {
-//            tmp.push_back(shapeit + i++);
-//        }
-//    }
-//    for (auto it = tmp.rbegin(); it != tmp.rend(); ++it) {
-//        shapes.insert(*it, workShape);
-//    }
-//    wrapper.cout << tmp.size() << std::endl;
 }
 
 void Shapes::inFrame(const Wrapper& wrapper) {
