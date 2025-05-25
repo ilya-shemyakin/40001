@@ -69,10 +69,10 @@ Point Shapes::parsePoint(std::string& dot) {
 Polygon Shapes::parseShape(std::ifstream& ifStream) {
     int dots = 0;
     if (!(ifStream >> dots)) {
-        throw ShapeError(ERROR_INVALID_COMMAND);
+        throw DotsError("");
     }
     if (dots <= 2) {
-        throw ShapeError(ERROR_INVALID_COMMAND);
+        throw DotsError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
     // because, f*ck logic
@@ -144,7 +144,12 @@ void Shapes::addShape(std::ifstream& ifStream) {
         try {
             Polygon shape = parseShape(ifStream);
             shapes.push_back(shape);
-        } catch (const workable::ShapeError& e) {}
+        } catch (const workable::ShapeError& e) {
+
+        } catch (const workable::DotsError& e) {
+            std::string dummy;
+            std::getline(ifStream, dummy);
+        }
     }
 }
 

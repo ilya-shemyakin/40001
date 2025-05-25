@@ -6,6 +6,11 @@ namespace workable
     const char* ShapeError::what() const noexcept {
         return msg_.c_str();
     }
+    ShapeError::ShapeError(const std::string& message) : msg_(message) {}
+    const char* DotsError::what() const noexcept {
+        return msg_.c_str();
+    }
+    DotsError::DotsError(const std::string& message) : msg_(message) {}
     std::istream& operator>>(std::istream& is, DelimiterIO&& dest)
     {
         std::istream::sentry sentry(is);

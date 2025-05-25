@@ -11,7 +11,15 @@ namespace workable
 {
     class ShapeError : public std::exception {
     public:
-        explicit ShapeError(const std::string& message) : msg_(message) {}
+        explicit ShapeError(const std::string& message);
+        virtual const char* what() const noexcept override;
+    private:
+        std::string msg_;
+    };
+    
+    class DotsError : public std::exception {
+    public:
+        explicit DotsError(const std::string& message);
         virtual const char* what() const noexcept override;
     private:
         std::string msg_;
