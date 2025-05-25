@@ -181,7 +181,7 @@ void Shapes::echo(const Wrapper& wrapper) {
     }
     if (workShape.points.size() == 0) {
         return;
-    }=
+    }
     size_t echoCount = 0;
     for (auto shapeIt = shapes.begin(); shapeIt != shapes.end(); ) {
         shapeIt = std::find(shapeIt, shapes.end(), workShape);
