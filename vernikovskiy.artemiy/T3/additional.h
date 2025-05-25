@@ -44,11 +44,11 @@ namespace workable
         }
 
         bool operator<(const Point& other) const {
-            return x_ < other.x_ && y_ < other.y_;
+            return x_ <= other.x_ && y_ <= other.y_;
         }
 
         bool operator>(const Point& other) const {
-            return x_ > other.x_ && y_ > other.y_;
+            return x_ >= other.x_ && y_ >= other.y_;
         }
     };
 
