@@ -135,17 +135,28 @@ void Shapes::echo(const Wrapper& wrapper) {
     if (workShape.points.size() == 0) {
         return;
     }
-    auto shapeIt = shapes.begin();
-    size_t echoCount = 0;
-    while (shapeIt != shapes.end()) {
-        shapeIt = std::find(shapeIt, shapes.end(), workShape);
-        if (shapeIt != shapes.end()) {
-            shapes.insert(++shapeIt, workShape);
-            ++shapeIt;
-            echoCount++;
+    // BANNED BY VALGRIND< BECAUSE... IDK, random bullshit go?
+//    auto shapeIt = shapes.begin();
+//    size_t echoCount = 0;
+//    while (shapeIt != shapes.end()) {
+//        shapeIt = std::find(shapeIt, shapes.end(), workShape);
+//        if (shapeIt != shapes.end()) {
+//            shapes.insert(++shapeIt, workShape);
+//            ++shapeIt;
+//            echoCount++;
+//        }
+//    }
+//    wrapper.cout << echoCount << std::endl;
+    std::vector<decltype(shapes.begin())> tmp;
+    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) {
+        if (workShape == *shapeit) {
+            tmp.push_back(shapeit + 1);
         }
     }
-    wrapper.cout << echoCount << std::endl;
+    for (auto pos : tmp) {
+        shapes.insert(pos, workShape);
+    }
+    wrapper.cout << tmp.size() << std::endl;
 }
 
 void Shapes::inFrame(const Wrapper& wrapper) {
