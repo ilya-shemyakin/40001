@@ -200,6 +200,9 @@ void Shapes::inFrame(const Wrapper& wrapper) {
         workShape = parseShape(wrapper);
     } catch (const workable::ShapeError& e) {
         wrapper.cout << e.what() << std::endl;
+        return;
+    } catch (const workable::DotsError& e) {
+        wrapper.cout << e.what() << std::endl;
         std::string dummy;
         std::getline(wrapper.cin, dummy);
         return;
