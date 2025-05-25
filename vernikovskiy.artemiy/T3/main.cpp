@@ -22,7 +22,6 @@ int main(int argc, char* argv[]) {
 
     workable::Wrapper wrap(std::cin, std::cout);
     shapes.processCommand(wrap);
-    shapes.print();
 
     return 0;
 }
