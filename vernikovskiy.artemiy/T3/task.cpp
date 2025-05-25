@@ -132,8 +132,17 @@ Polygon Shapes::parseShape(const Wrapper& wrapper) {
         throw ShapeError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
-    for (int i = 0; i < dots; i++) {
-        shape.points.push_back(parsePoint(wrapper));
+//    for (int i = 0; i < dots; i++) {
+//        shape.points.push_back(parsePoint(wrapper));
+//    }
+    std::string dotsSpaces;
+    std::getline(wrapper.cin, dotsSpaces);
+    std::vector<std::string> tokensDots = split(dotsSpaces);
+    if (static_cast<size_t>(dots) != tokensDots.size() - 1) {
+        throw ShapeError(ERROR_INVALID_COMMAND);
+    }
+    for (size_t i = 1; i < tokensDots.size(); i++) {
+        shape.points.push_back(parsePoint(tokensDots[i]));
     }
 
     return shape;

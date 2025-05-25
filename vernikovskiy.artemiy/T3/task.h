@@ -38,18 +38,11 @@ namespace doomsday
     private:
         static std::vector< Polygon > shapes;
         static constexpr const char* ERROR_INVALID_COMMAND = "<INVALID COMMAND>";
-/*        using FunctionVariant = std::variant<*/
-/*            std::function<unsigned int(const Wrapper& wrapper)>,*/
-/*            std::function<bool(const Wrapper& wrapper)>,*/
-/*            std::function<double(const Wrapper& wrapper)>,*/
-/*            std::function<void(const Wrapper&)>*/
-/*        >; // no variant, use only std::function<void(const Wrapper&)>*/
-        //std::map<std::string, FunctionVariant> functionMap;
         std::map<std::string, std::function<void(const Wrapper& wrapper)>> functionMap;
 
         static Point parsePoint(const Wrapper& wrapper);
         Point parsePoint(std::ifstream& ifStream);
-        Point parsePoint(std::string& dot);
+        static Point parsePoint(std::string& dot);
         static Polygon buildFrame();
         static double getPolygonArea(const Polygon& shape);
         static Polygon parseShape(const Wrapper& wrapper);
