@@ -1,6 +1,7 @@
 #include "task.h"
 #include "ScopeGuard.h"
 #include <iomanip>
+#include <vector>
 
 namespace doomsday
 {
@@ -14,6 +15,17 @@ Shapes::Shapes() {
     functionMap["COUNT"] = std::function<void(const Wrapper&)>(count);
 }
 
+void Shapes::print() {
+    for (auto& shape : shapes)
+    {
+        std::cout << shape.points.size() << " ";
+        for (auto& point : shape.points)
+        {
+            std::cout << "(" << point.x_ << ";" << point.y_ << ")" << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 void Shapes::processCommand(const Wrapper& wrapper) {
     while (!wrapper.cin.eof()) {
@@ -43,6 +55,17 @@ Point Shapes::parsePoint(std::ifstream& ifStream) {
     return Point(x, y);
 }
 
+Point Shapes::parsePoint(std::string& dot) {
+    int x, y;
+    std::stringstream ss(dot);
+    if (!(ss >> DelimiterIO{'('} >> x >> DelimiterIO{';'} >> y >> DelimiterIO{')'}))
+    {
+        throw ShapeError(ERROR_INVALID_COMMAND);
+    }
+
+    return Point(x, y);
+}
+
 Polygon Shapes::parseShape(std::ifstream& ifStream) {
     int dots = 0;
     if (!(ifStream >> dots)) {
@@ -52,9 +75,19 @@ Polygon Shapes::parseShape(std::ifstream& ifStream) {
         throw ShapeError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
-    for (int i = 0; i < dots; i++)
-    {
-        shape.points.push_back(parsePoint(ifStream));
+    // because, f*ck logic
+//    for (int i = 0; i < dots; i++)
+//    {
+//        shape.points.push_back(parsePoint(ifStream));
+//    }
+    std::string dotsSpaces;
+    std::getline(ifStream, dotsSpaces);
+    std::vector<std::string> tokensDots = split(dotsSpaces);
+    if (static_cast<size_t>(dots) != tokensDots.size() - 1) {
+        throw ShapeError(ERROR_INVALID_COMMAND);
+    }
+    for (size_t i = 1; i < tokensDots.size(); i++) {
+        shape.points.push_back(parsePoint(tokensDots[i]));
     }
     return shape;
 }
@@ -114,6 +147,7 @@ void Shapes::addShape(std::ifstream& ifStream) {
         } catch (const workable::ShapeError& e) {
             std::string fummy;
             std::getline(ifStream, fummy);
+            // std::cout << fummy << "\n";
         }
     }
 }
@@ -135,28 +169,28 @@ void Shapes::echo(const Wrapper& wrapper) {
     if (workShape.points.size() == 0) {
         return;
     }
-    // BANNED BY VALGRIND< BECAUSE... IDK, random bullshit go?
-//    auto shapeIt = shapes.begin();
-//    size_t echoCount = 0;
-//    while (shapeIt != shapes.end()) {
-//        shapeIt = std::find(shapeIt, shapes.end(), workShape);
-//        if (shapeIt != shapes.end()) {
-//            shapes.insert(++shapeIt, workShape);
-//            ++shapeIt;
-//            echoCount++;
-//        }
-//    }
-//    wrapper.cout << echoCount << std::endl;
-    std::vector<decltype(shapes.begin())> tmp;
-    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) {
-        if (workShape == *shapeit) {
-            tmp.push_back(shapeit + 1);
+    // BANNED BY VALGRIND, BECAUSE... IDK, random bullshit go?
+    size_t echoCount = 0;
+    for (auto shapeIt = shapes.begin(); shapeIt != shapes.end(); ) {
+        shapeIt = std::find(shapeIt, shapes.end(), workShape);
+        if (shapeIt != shapes.end()) {
+            shapeIt = shapes.insert(shapeIt + 1, workShape);
+            ++shapeIt;
+            echoCount++;
         }
     }
-    for (auto pos : tmp) {
-        shapes.insert(pos, workShape);
-    }
-    wrapper.cout << tmp.size() << std::endl;
+    wrapper.cout << echoCount << std::endl;
+//    std::vector<decltype(shapes.begin())> tmp;
+//    int i = 0;
+//    for (auto shapeit = shapes.begin(); shapeit != shapes.end(); ++shapeit) {
+//        if (workShape == *shapeit) {
+//            tmp.push_back(shapeit + i++);
+//        }
+//    }
+//    for (auto it = tmp.rbegin(); it != tmp.rend(); ++it) {
+//        shapes.insert(*it, workShape);
+//    }
+//    wrapper.cout << tmp.size() << std::endl;
 }
 
 void Shapes::inFrame(const Wrapper& wrapper) {
@@ -398,18 +432,6 @@ void Shapes::count(const Wrapper& wrapper) {
         }
         wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
         return;
-    }
-}
-
-void Shapes::print() {
-    for (auto& shape : shapes)
-    {
-        std::cout << shape.points.size() << " ";
-        for (auto& point : shape.points)
-        {
-            std::cout << "(" << point.x_ << ";" << point.y_ << ")" << " ";
-        }
-        std::cout << std::endl;
     }
 }
 

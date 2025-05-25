@@ -49,6 +49,7 @@ namespace doomsday
 
         static Point parsePoint(const Wrapper& wrapper);
         Point parsePoint(std::ifstream& ifStream);
+        Point parsePoint(std::string& dot);
         static Polygon buildFrame();
         static double getPolygonArea(const Polygon& shape);
         static Polygon parseShape(const Wrapper& wrapper);

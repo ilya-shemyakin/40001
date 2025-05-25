@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <vector>
+
 
 namespace workable
 {
@@ -47,6 +49,8 @@ namespace workable
 
     std::istream& operator>>(std::istream& is, DelimiterIO&& delim);
     std::ifstream& operator>>(std::ifstream& is, DelimiterIO&& delim);
+    
+    std::vector<std::string> split(const std::string& declar);
 };
 
 #endif

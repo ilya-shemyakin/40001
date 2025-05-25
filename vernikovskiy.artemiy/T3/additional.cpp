@@ -1,4 +1,5 @@
 #include "additional.h"
+#include <sstream>
 
 namespace workable
 {
@@ -11,7 +12,6 @@ namespace workable
         if (!sentry)
         {
             return is;
-            std::cout << "SENTRY" << std::endl;
         }
         char c = '0';
         is >> c;
@@ -28,7 +28,6 @@ namespace workable
         if (!sentry)
         {
             return is;
-            std::cout << "SENTRY" << std::endl;
         }
         char c = '0';
         is >> c;
@@ -50,5 +49,15 @@ namespace workable
 
         double s = (a + b + c) / 2.0;
         return std::sqrt(s * (s - a) * (s - b) * (s - c));
+    }
+    
+    std::vector<std::string> split(const std::string& declar) {
+        std::vector<std::string> tokens;
+        std::stringstream ss(declar);
+        std::string token;
+        while (std::getline(ss, token, ' ')) {
+            tokens.push_back(token);
+        }
+        return tokens;
     }
 }
