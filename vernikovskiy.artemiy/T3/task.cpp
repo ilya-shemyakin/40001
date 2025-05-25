@@ -38,6 +38,8 @@ void Shapes::processCommand(const Wrapper& wrapper) {
             func->second(wrapper);
         } else {
             std::cout << ERROR_INVALID_COMMAND << std::endl;
+            std::string dummy;
+            std::getline(wrapper.cin, dummy);
         }
     }
 }
