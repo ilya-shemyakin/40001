@@ -16,13 +16,9 @@ struct Delimiter
 {
     char expected;
 };
-struct Int
-{
-    int& reference;
-};
 
 std::istream& operator>>(std::istream& stream, Delimiter&& value);
-std::istream& operator>>(std::istream& stream, Int&& value);
+std::istream& operator>>(std::istream& stream, Point&& value);
 std::istream& operator>>(std::istream& stream, Polygon& value);
 
 #endif

@@ -5,6 +5,7 @@
 #include <numeric>
 #include <iomanip>
 #include <algorithm>
+#include <sstream>
 #include "commands.hpp"
 
 void AREA(const std::vector<Polygon>& polygons, const std::string& parameter)
@@ -103,8 +104,9 @@ void COUNT(const std::vector<Polygon>& polygons, const std::string& parameter)
         }
     }
 }
-void RECTS(const std::vector<Polygon>& polygons)
+void RECTS(const std::vector<Polygon>& polygons, const std::string& parameter)
 {
+    (void)parameter;
     if (polygons.empty()) {
         std::cout << "<INVALID COMMAND>" << '\n';
         return;
@@ -113,11 +115,26 @@ void RECTS(const std::vector<Polygon>& polygons)
     std::cout << count << '\n';
 }
 
-void INTERSECTIONS(const std::vector<Polygon>& polygons, const Polygon& target)
+void INTERSECTIONS(const std::vector<Polygon>& polygons, const std::string& target)
 {
     if (polygons.empty()) {
         std::cout << "<INVALID COMMAND>" << '\n';
         return;
     }
+    std::istringstream iss(target);
+    Polygon shape;
+    iss >> shape;
 
+    if (!iss || (shape.points.size() < 3)) {
+        std::cout << "<INVALID COMMAND>\n";
+        return;
+    }
+    size_t count = std::count_if(
+        polygons.begin(),
+        polygons.end(),
+        [&shape](const Polygon& poly) {
+            return (poly.points.size() >= 3) && PolygonIntersectionChecker{shape}(poly);
+        }
+    );
+    std::cout << count << '\n';
 }
