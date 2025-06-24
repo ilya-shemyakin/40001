@@ -38,7 +38,7 @@ double NumOfVertexesAccumulator::operator()(double accum, const Polygon& polygon
 }
 size_t EvenCountSelecter::operator()(const Polygon& polygon) const
 {
-    return evenCond(polygon) ? 1 : 0;
+    return (evenCond(polygon) ? 1 : 0);
 }
 size_t OddCountSelecter::operator()(const Polygon& polygon) const
 {

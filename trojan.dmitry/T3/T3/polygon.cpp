@@ -40,7 +40,7 @@ std::istream& operator>>(std::istream& stream, Polygon& value)
     trojan::StreamGuard guard(stream);
     std::vector< Point > temp;
     size_t count = 0;
-    if ((stream.peek() == '-') || (!stream >> count) || (count < 3)) {
+    if ((stream.peek() == '-') || !(stream >> count) || (count < 3)) {
         stream.setstate(std::ios::failbit);
     }
     else {
