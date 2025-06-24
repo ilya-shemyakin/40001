@@ -3,6 +3,7 @@
 #include "functors.hpp"
 #include <utility>
 #include <iomanip>
+#include <algorithm>
 #include <iterator>
 #include "stream_guard.hpp"
 

@@ -51,7 +51,7 @@ bool area(const std::vector< Polygon >& polygons)
     }
     return true;
 }
-bool max(const std::vector< Polygon >& polygons)
+bool maxx(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
     std::cin >> parameter;
@@ -73,7 +73,7 @@ bool max(const std::vector< Polygon >& polygons)
     }
     return true;
 }
-bool min(const std::vector< Polygon >& polygons)
+bool minn(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
     std::cin >> parameter;

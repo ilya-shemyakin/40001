@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iterator>
 #include <map>
+#include <numeric>
+#include <limits>
 #include <functional>
 #include <string>
 #include <iomanip>
@@ -31,8 +33,8 @@ int main(int argc, char** argv)
     }
     static const std::map< std::string, std::function< bool(const std::vector< Polygon >&) > > commands = {
         {"AREA", area},
-        {"MAX", max},
-        {"MIN", min},
+        {"MAX", maxx},
+        {"MIN", minn},
         {"COUNT", count},
         {"RECTS", rects},
         {"INTERSECTIONS", intersections}
