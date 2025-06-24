@@ -47,7 +47,7 @@ int main(int argc, char** argv)
         if ((current == end) || !(current->second)(vector)) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
-            std::cout << "<INVALID COMAND>\n";
+            std::cout << "<INVALID COMMAND>\n";
         }
     }
 }
