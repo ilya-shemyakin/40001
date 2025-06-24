@@ -1,62 +1,50 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
 #include <iterator>
-#include <utility>
-#include <limits>
 #include <map>
 #include <functional>
 #include <string>
-#include <sstream>
+#include <iomanip>
 #include "polygon.hpp"
 #include "commands.hpp"
 
 int main(int argc, char** argv)
 {
     if (argc != 2) {
-        std::cerr << "Not enough arguments" << '\n';
+        std::cerr << "Not enough arguments\n";
         return 1;
     }
     std::vector< Polygon > vector;
     std::ifstream file(argv[1]);
+    if (!file) {
+        std::cerr << "Fail to open file\n";
+        return 1;
+    }
+    using iter = std::istream_iterator< Polygon >;
     while (!file.eof()) {
-        std::copy(std::istream_iterator< Polygon >(file), std::istream_iterator< Polygon >(), std::back_inserter(vector));
+        std::copy(iter(file), iter(), std::back_inserter(vector));
         if (file.fail() && !file.eof()) {
             file.clear();
             file.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
         }
     }
-    std::map< std::string, std::function< void(const std::vector< Polygon >&,const std::string&) > > cmnds =
-    {
-        {"AREA", AREA},
-        {"MAX", MAX},
-        {"MIN", MIN},
-        {"COUNT", COUNT},
-        {"RECTS", RECTS},
-        {"INTERSECTIONS", INTERSECTIONS}
+    static const std::map< std::string, std::function< bool(const std::vector< Polygon >&) > > commands = {
+        {"AREA", area},
+        {"MAX", max},
+        {"MIN", min},
+        {"COUNT", count},
+        {"RECTS", rects},
+        {"INTERSECTIONS", intersections}
     };
-    
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        std::istringstream iss(line);
-        std::string command, parameter;
-        iss >> command;
-
-        if (command.empty()) {
-            continue;
+    std::cout << std::fixed << std::setprecision(1);
+    std::string command;
+    auto end = commands.cend();
+    while (!(std::cin >> command).eof()) {
+        auto current = commands.find(command);
+        if ((current == end) || !(current->second)(vector)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+            std::cout << "<INVALID COMAND>\n";
         }
-        std::getline(iss >> std::ws, parameter);
-        auto it = cmnds.find(command);
-        if (it != cmnds.end()) {
-            //if (it->second(vector, parameter)
-            //{
-            //    // good
-            //    continue;
-            //}
-            std::cout << "Good\n";
-            continue;
-        }
-        it->second(vector, parameter);
-        std::cout << "<INVALID COMAND>\n";
     }
 }

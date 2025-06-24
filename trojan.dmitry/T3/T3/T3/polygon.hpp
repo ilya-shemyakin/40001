@@ -18,7 +18,7 @@ struct Delimiter
 };
 
 std::istream& operator>>(std::istream& stream, Delimiter&& value);
-std::istream& operator>>(std::istream& stream, Point&& value);
+std::istream& operator>>(std::istream& stream, Point& value);
 std::istream& operator>>(std::istream& stream, Polygon& value);
 
 #endif

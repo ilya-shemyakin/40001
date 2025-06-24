@@ -1,7 +1,16 @@
 #include "functions.hpp"
 #include "functors.hpp"
 #include <algorithm>
+#include <functional>
 #include <numeric>
+
+using namespace std::placeholders;
+static auto getData = std::bind(std::mem_fn(&Polygon::points), _1);
+static auto getDataSize = std::bind(&decltype(Polygon::points)::size, getData);
+static auto evenCond = std::bind(std::equal_to<>(), 0, std::bind(std::modulus<>(), std::bind(getDataSize, _1), 2));
+static auto logicalNot = std::bind(std::logical_not<>(), _1);
+static auto less = std::bind(std::less<>(), _1, _2);
+
 
 double AreaAccumulator::operator()(double accum, const Point& point) const
 {
@@ -10,14 +19,14 @@ double AreaAccumulator::operator()(double accum, const Point& point) const
     return accum + (point.x * polygon.points[j].y) - (polygon.points[j].x * point.y);
 }
 
-double EvenAccumulator::operator()(double accum, const Polygon& polygon) const
+double EvenAreaSelect::operator()(const Polygon& polygon) const
 {
-    return accum + ((polygon.points.size() % 2 == 1) ? getArea(polygon) : 0);
+    return evenCond(polygon) ? getArea(polygon) : 0;
 }
 
-double OddAccumulator::operator()(double accum, const Polygon& polygon) const
+double OddAreaSelect::operator()(const Polygon& polygon) const
 {
-    return accum + ((polygon.points.size() % 2 == 1) ? getArea(polygon) : 0);
+    return logicalNot(evenCond(polygon)) ? getArea(polygon) : 0;
 }
 double MeanAccumulator::operator()(double accum, const Polygon& polygon) const
 {
@@ -27,29 +36,13 @@ double NumOfVertexesAccumulator::operator()(double accum, const Polygon& polygon
 {
     return accum + ((polygon.points.size() == num) ? getArea(polygon) : 0);
 }
-bool MaxAreaComparator::operator()(const Polygon& lhs, const Polygon& rhs) const
+size_t EvenCountSelecter::operator()(const Polygon& polygon) const
 {
-    return getArea(lhs) < getArea(rhs);
+    return evenCond(polygon) ? 1 : 0;
 }
-bool MaxOfVertexesComparator::operator()(const Polygon& lhs, const Polygon& rhs) const
+size_t OddCountSelecter::operator()(const Polygon& polygon) const
 {
-    return lhs.points.size() < rhs.points.size();
-}
-bool MinAreaComparator::operator()(const Polygon& lhs, const Polygon& rhs) const
-{
-    return getArea(lhs) < getArea(rhs);
-}
-bool MinOfVertexesComparator::operator()(const Polygon& lhs, const Polygon& rhs) const
-{
-    return lhs.points.size() < rhs.points.size();
-}
-size_t EvenCountAccumulator::operator()(size_t accum, const Polygon& polygon) const
-{
-    return accum + ((polygon.points.size() % 2 == 0) ? 1 : 0);
-}
-size_t OddCountAccumulator::operator()(size_t accum, const Polygon& polygon) const
-{
-    return accum + ((polygon.points.size() % 2 == 1) ? 1 : 0);
+    return logicalNot(evenCond(polygon)) ? 1 : 0;
 }
 size_t VertexCountAccumulator::operator()(size_t accum, const Polygon& polygon) const
 {
