@@ -2,6 +2,7 @@
 #include "ScopeGuard.h"
 #include <iomanip>
 #include <vector>
+#include <limits>
 
 namespace doomsday
 {
@@ -37,9 +38,8 @@ void Shapes::processCommand(const Wrapper& wrapper) {
         if (func != functionMap.end()) {
             func->second(wrapper);
         } else {
-            std::cout << ERROR_INVALID_COMMAND << std::endl;
-            std::string dummy;
-            std::getline(wrapper.cin, dummy);
+            wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
+            wrapper.cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 }
@@ -77,11 +77,6 @@ Polygon Shapes::parseShape(std::ifstream& ifStream) {
         throw DotsError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
-    // because, f*ck logic
-//    for (int i = 0; i < dots; i++)
-//    {
-//        shape.points.push_back(parsePoint(ifStream));
-//    }
     std::string dotsSpaces;
     std::getline(ifStream, dotsSpaces);
     std::vector<std::string> tokensDots = split(dotsSpaces);
@@ -134,9 +129,6 @@ Polygon Shapes::parseShape(const Wrapper& wrapper) {
         throw DotsError(ERROR_INVALID_COMMAND);
     }
     Polygon shape;
-//    for (int i = 0; i < dots; i++) {
-//        shape.points.push_back(parsePoint(wrapper));
-//    }
     std::string dotsSpaces;
     std::getline(wrapper.cin, dotsSpaces);
     std::vector<std::string> tokensDots = split(dotsSpaces);
@@ -158,8 +150,7 @@ void Shapes::addShape(std::ifstream& ifStream) {
         } catch (const workable::ShapeError& e) {
 
         } catch (const workable::DotsError& e) {
-            std::string dummy;
-            std::getline(ifStream, dummy);
+            ifStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 }
@@ -177,8 +168,7 @@ void Shapes::echo(const Wrapper& wrapper) {
         return;
     } catch (const workable::DotsError& e) {
         wrapper.cout << e.what() << std::endl;
-        std::string dummy;
-        std::getline(wrapper.cin, dummy);
+        wrapper.cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
     if (workShape.points.size() == 0) {
@@ -205,8 +195,7 @@ void Shapes::inFrame(const Wrapper& wrapper) {
         return;
     } catch (const workable::DotsError& e) {
         wrapper.cout << e.what() << std::endl;
-        std::string dummy;
-        std::getline(wrapper.cin, dummy);
+        wrapper.cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
     if (workShape.points.size() == 0) {
@@ -248,8 +237,7 @@ void Shapes::area(const Wrapper& wrapper) {
 
         if (shapes.size() == 0 && param == "MEAN") {
             wrapper.cout << ERROR_INVALID_COMMAND << std::endl;
-            std::string dummy;
-            std::getline(wrapper.cin, dummy);
+            wrapper.cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return;
         }
 
