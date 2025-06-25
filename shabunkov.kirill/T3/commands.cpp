@@ -394,7 +394,7 @@ void processCommands(const std::vector<Polygon>& polygons)
           try
           {
             int num = std::stoi(param);
-            size_t count = countNumOfVertexes(num, polygons);
+            int count = countNumOfVertexes(num, polygons);
             if (count != -1)
             {
               std::cout << count << '\n';
