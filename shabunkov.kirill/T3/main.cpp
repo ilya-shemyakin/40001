@@ -6,11 +6,8 @@
 #include <iomanip>
 #include <limits>
 
-
-
 #include "commands.h"
 #include "Polygon.h"
-
 
 int main(int argc, char* argv[])
 {
@@ -27,13 +24,16 @@ int main(int argc, char* argv[])
 
   std::vector<Polygon> polygons;
   Polygon poly;
-  while (input >> poly) {
-    polygons.push_back(poly);
-  }
 
-  if (!input.eof()) {
-    std::cerr << "ERROR: invalid input format\n";
-    return 2;
+  while (input >> poly || !input.eof())
+  {
+    if (input.fail())
+    {
+      input.clear();
+      input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      continue;
+    }
+    polygons.push_back(poly);
   }
 
   processCommands(polygons);
