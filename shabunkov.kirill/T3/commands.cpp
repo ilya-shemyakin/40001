@@ -486,6 +486,14 @@ void processCommands(const std::vector<Polygon>& polygons)
         size_t count = rightShapes(polygons);
         std::cout << count << '\n';
       }
+      else if (command == "ECHO" || command == "RMECHO" ||
+        command == "MAXSEQ" || command == "PERMS" ||
+        command == "INTERSECTIONS" || command == "SAME" ||
+        command == "RECTS" || command == "LESSAREA")
+      {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        invalidCommand();
+      }
       else
       {
         invalidCommand();
