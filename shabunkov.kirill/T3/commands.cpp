@@ -15,12 +15,12 @@ void invalidCommand()
 {
   std::cout << "<INVALID COMMAND>\n";
   std::cin.clear();
-  std::cin.ignore();
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 bool isEmpty(const std::vector<Polygon>& polys)
 {
-  return polys.size() == 0;
+  return polys.empty();
 }
 
 std::istream& operator>>(std::istream& in, Point& p)
@@ -48,20 +48,15 @@ std::istream& operator>>(std::istream& in, Polygon& poly) {
     return in;
   }
 
-  for (int i = 0; i < count; ++i)
+  std::generate_n(std::back_inserter(poly.points), count, [&in]()
   {
-    if (in.peek() == '\n') {
-      in.setstate(std::ios::failbit);
-      return in;
-    }
     Point p;
-    if (!(in >> p)) {
-      return in;
-    }
-    poly.points.push_back(p);
+    in >> p;
+    return p;
   }
+  );
 
-  if (in.peek() != EOF && in.peek() != '\n')
+  if (in.fail() || (in.peek() != EOF && in.peek() != '\n'))
   {
     in.setstate(std::ios::failbit);
   }
@@ -288,9 +283,14 @@ bool inFrame(const std::vector<Polygon>& polys, const Polygon& target)
 {
   using namespace std::placeholders;
 
-  if (polys.empty() || target.points.size() == 0)
+  if (target.points.size() < 3)
   {
-    invalidCommand();
+    std::cout << "<INVALID COMMAND>\n";
+    return false;
+  }
+
+  if (polys.empty())
+  {
     return false;
   }
 
@@ -299,10 +299,12 @@ bool inFrame(const std::vector<Polygon>& polys, const Polygon& target)
 
   auto isInFrame = std::bind(
     PointInFrameChecker(min_x, min_y, max_x, max_y),
-    std::placeholders::_1
+    _1
   );
 
-  return std::all_of(target.points.begin(), target.points.end(), isInFrame);
+  bool allInFrame = std::all_of(target.points.begin(), target.points.end(), isInFrame);
+  std::cout << (allInFrame ? "<TRUE>" : "<FALSE>") << "\n";
+  return allInFrame;
 }
 
 bool hasRightAngle(const std::vector<Point>& point)

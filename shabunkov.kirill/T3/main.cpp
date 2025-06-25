@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
   if (!input.eof()) {
     std::cerr << "ERROR: invalid input format\n";
-    return 1;
+    return 2;
   }
 
   processCommands(polygons);
