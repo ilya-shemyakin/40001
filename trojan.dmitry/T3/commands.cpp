@@ -13,10 +13,26 @@ using namespace std::placeholders;
 static auto getData = std::bind(std::mem_fn(&Polygon::points), _1);
 static auto getDataSize = std::bind(&decltype(Polygon::points)::size, getData);
 
+bool eol()
+{
+    while (std::cin.peek() != '\n')
+    {
+        char c = '\0';
+        std::cin.get(c);
+        if (!std::isspace(c))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool area(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
-    std::cin >> parameter;
+    if (!(std::cin >> parameter) || !eol()) {
+        return false;
+    }
     if (parameter == "EVEN") {
         double sumOfArea = std::accumulate(polygons.begin(), polygons.end(), 0.0, std::bind(std::plus<>(), _1,
             std::bind(EvenAreaSelect{}, _2)));
@@ -54,8 +70,7 @@ bool area(const std::vector< Polygon >& polygons)
 bool maxx(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
-    std::cin >> parameter;
-    if (polygons.empty()) {
+    if (!(std::cin >> parameter) || !eol() || (polygons.empty())) {
         return false;
     }
     if (parameter == "AREA") {
@@ -76,8 +91,7 @@ bool maxx(const std::vector< Polygon >& polygons)
 bool minn(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
-    std::cin >> parameter;
-    if (polygons.empty()) {
+    if (!(std::cin >> parameter) || !eol() || (polygons.empty())) {
         return false;
     }
     if (parameter == "AREA") {
@@ -98,7 +112,9 @@ bool minn(const std::vector< Polygon >& polygons)
 bool count(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
-    std::cin >> parameter;
+    if (!(std::cin >> parameter) || !eol()) {
+        return false;
+    }
 
     if (parameter == "EVEN") {
         size_t count = std::accumulate(polygons.begin(), polygons.end(), 0, std::bind(std::plus<>(), _1,
@@ -125,9 +141,9 @@ bool count(const std::vector< Polygon >& polygons)
     }
     return true;
 }
-bool rects(const std::vector<Polygon>& polygons)
+bool rects(const std::vector< Polygon >& polygons)
 {
-    if (polygons.empty()) {
+    if (!eol() || (polygons.empty())) {
         return false;
     }
     size_t count = std::count_if(polygons.begin(), polygons.end(), IsRectangleChecker());
@@ -135,10 +151,10 @@ bool rects(const std::vector<Polygon>& polygons)
     return true;
 }
 
-bool intersections(const std::vector<Polygon>& polygons)
+bool intersections(const std::vector< Polygon >& polygons)
 {
     Polygon shape;
-    if (!(std::cin >> shape) || (shape.points.size() < 3)) {
+    if (!(std::cin >> shape) || !eol() || (shape.points.size() < 3)) {
         return false;
     }
     static auto hasAtLeast3Points = std::bind(std::greater_equal<>(), std::bind(getDataSize, _1), 3);
