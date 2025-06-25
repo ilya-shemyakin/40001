@@ -42,8 +42,15 @@ std::istream& operator>>(std::istream& in, Polygon& poly) {
   poly.points.clear();
   int count;
 
-  if (!(in >> count) || (count < 3))
+  if (!(in >> count))
   {
+    in.setstate(std::ios::failbit);
+    return in;
+  }
+
+  if (count < 3)
+  {
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     in.setstate(std::ios::failbit);
     return in;
   }
