@@ -42,29 +42,24 @@ std::istream& operator>>(std::istream& in, Polygon& poly) {
   poly.points.clear();
   int count;
 
-  if (!(in >> count))
-  {
+  if (!(in >> count) || (count < 3)) {
     in.setstate(std::ios::failbit);
     return in;
   }
 
-  if (count < 3)
-  {
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    in.setstate(std::ios::failbit);
-    return in;
-  }
-
-  std::generate_n(std::back_inserter(poly.points), count, [&in]()
-  {
+  for (int i = 0; i < count; ++i) {
+    if (in.peek() == '\n') {
+      in.setstate(std::ios::failbit);
+      return in;
+    }
     Point p;
-    in >> p;
-    return p;
+    if (!(in >> p)) {
+      return in;
+    }
+    poly.points.push_back(p);
   }
-  );
 
-  if (in.fail() || (in.peek() != EOF && in.peek() != '\n'))
-  {
+  if (in.peek() != EOF && in.peek() != '\n') {
     in.setstate(std::ios::failbit);
   }
 
@@ -481,7 +476,7 @@ void processCommands(const std::vector<Polygon>& polygons)
       else if (command == "INFRAME")
       {
         Polygon target;
-        if (!(std::cin >> target))
+        if (!(std::cin >> target) || target.points.size() < 3)
         {
           invalidCommand();
           continue;
