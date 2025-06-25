@@ -1,17 +1,12 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
-#include <numeric>
-#include <string>
-#include <functional>
-#include <iomanip>
-#include <map>
-#include <cmath>
-#include <sstream>
 #include <fstream>
 #include <iterator>
+#include <string>
+#include <sstream>
+#include <map>
+#include <functional>
 #include <limits>
-#include "code.hpp"
+#include "shapesCommandsSet.hpp"
 
 
 int main(int argc, char* argv[])
@@ -38,14 +33,14 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::map<std::string, std::function<void(const std::vector< Polygon >&, std::string&)>> commands =
+  std::map<std::string, std::function<void(const std::vector< Polygon >&, std::istream& in, std::ostream& out)>> commands =
   {
-    {"AREA", timofeev::AREA},
-    {"MAX", timofeev::MAX},
-    {"MIN", timofeev::MIN},
-    {"COUNT", timofeev::COUNT},
-    {"MAXSEQ", timofeev::MAXSEQ},
-    {"RECTS", timofeev::RECTS},
+    {"AREA", timofeev::area},
+    {"MAX", timofeev::max},
+    {"MIN", timofeev::min},
+    {"COUNT", timofeev::count},
+    {"MAXSEQ", timofeev::maxseq},
+    {"RECTS", timofeev::rects},
   };
 
   std::string key;
@@ -53,13 +48,14 @@ int main(int argc, char* argv[])
   {
     try
     {
-      std::string arg;
-      std::getline(std::cin, arg);
-      arg.erase(0, 1);
+      std::string argLine;
+      std::getline(std::cin, argLine);
+      std::istringstream argStream(argLine);
 
       auto it = commands.find(key);
-      if (it != commands.end()) {
-        it->second(data, arg);
+      if (it != commands.end())
+      {
+        it->second(data, argStream, std::cout);
       }
       else
       {
