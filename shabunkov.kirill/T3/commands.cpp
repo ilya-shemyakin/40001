@@ -5,12 +5,11 @@
 #include <cmath>
 #include <functional>
 #include <iomanip>
-
-
+#include <limits>
+#include <cstddef>
 
 #include "commands.h"
 #include "Polygon.h"
-
 
 void invalidCommand()
 {
@@ -220,11 +219,11 @@ double minAreaVertexes(const std::string& parametr, const std::vector<Polygon>& 
   return 0.0;
 }
 
-int countEvenOdd(const std::string& parametr, const std::vector<Polygon>& polys)
+size_t countEvenOdd(const std::string& parametr, const std::vector<Polygon>& polys)
 {
   bool checkEven = (parametr == "EVEN");
 
-  int result = std::count_if(
+  size_t result = std::count_if(
     polys.begin(),
     polys.end(),
     [checkEven](const Polygon& poly)
@@ -237,7 +236,7 @@ int countEvenOdd(const std::string& parametr, const std::vector<Polygon>& polys)
   return result;
 }
 
-int countNumOfVertexes(int vertexes, const std::vector<Polygon>& polys)
+size_t countNumOfVertexes(int vertexes, const std::vector<Polygon>& polys)
 {
   if (vertexes < 3)
   {
@@ -245,12 +244,12 @@ int countNumOfVertexes(int vertexes, const std::vector<Polygon>& polys)
     return -1;
   }
 
-  int result = std::count_if(
+  size_t result = std::count_if(
     polys.begin(),
     polys.end(),
     [vertexes](const Polygon& poly)
     {
-      return poly.points.size() == vertexes;
+      return poly.points.size() == static_cast<size_t>(vertexes);
     }
   );
 
@@ -311,7 +310,7 @@ bool hasRightAngle(const std::vector<Point>& point)
   return std::any_of(point.begin(), point.end(), AngleChecker{ point });
 }
 
-int rightShapes(const std::vector<Polygon>& polys) {
+size_t rightShapes(const std::vector<Polygon>& polys) {
   return std::count_if(polys.begin(), polys.end(),
     [](const Polygon& poly) {
       return hasRightAngle(poly.points);
@@ -387,7 +386,7 @@ void processCommands(const std::vector<Polygon>& polygons)
         std::cin >> param;
         if (param == "EVEN" || param == "ODD")
         {
-          int count = countEvenOdd(param, polygons);
+          size_t count = countEvenOdd(param, polygons);
           std::cout << count << '\n';
         }
         else
@@ -395,7 +394,7 @@ void processCommands(const std::vector<Polygon>& polygons)
           try
           {
             int num = std::stoi(param);
-            int count = countNumOfVertexes(num, polygons);
+            size_t count = countNumOfVertexes(num, polygons);
             if (count != -1)
             {
               std::cout << count << '\n';
@@ -416,7 +415,7 @@ void processCommands(const std::vector<Polygon>& polygons)
       }
       else if (command == "RIGHTSHAPES")
       {
-        int count = rightShapes(polygons);
+        size_t count = rightShapes(polygons);
         std::cout << count << '\n';
       }
       else {

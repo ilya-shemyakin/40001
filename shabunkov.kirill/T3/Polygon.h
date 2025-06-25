@@ -6,6 +6,16 @@ struct Point
 {
   int x;
   int y;
+
+  bool operator==(const Point& other) const
+  {
+    return x == other.x && y == other.y;
+  }
+
+  bool operator!=(const Point& other) const
+  {
+    return !(*this == other);
+  }
 };
 
 struct Polygon
@@ -29,14 +39,15 @@ struct PointInFrameChecker
 struct AngleChecker
 {
   const std::vector<Point>& p;
-  size_t i = 0;
 
-  bool operator()(const Point&)
+  bool operator()(const Point& curr) const
   {
+    auto it = std::find(p.begin(), p.end(), curr);
+    if (it == p.end()) return false;
+
+    size_t i = std::distance(p.begin(), it);
     const Point& prev = p[(i + p.size() - 1) % p.size()];
-    const Point& curr = p[i];
     const Point& next = p[(i + 1) % p.size()];
-    i++;
 
     return (prev.x - curr.x) * (next.x - curr.x)
       + (prev.y - curr.y) * (next.y - curr.y) == 0;
