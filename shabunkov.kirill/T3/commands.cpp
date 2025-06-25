@@ -236,7 +236,7 @@ size_t countEvenOdd(const std::string& parametr, const std::vector<Polygon>& pol
   return result;
 }
 
-size_t countNumOfVertexes(int vertexes, const std::vector<Polygon>& polys)
+int countNumOfVertexes(int vertexes, const std::vector<Polygon>& polys)
 {
   if (vertexes < 3)
   {
@@ -244,7 +244,7 @@ size_t countNumOfVertexes(int vertexes, const std::vector<Polygon>& polys)
     return -1;
   }
 
-  size_t result = std::count_if(
+  int result = std::count_if(
     polys.begin(),
     polys.end(),
     [vertexes](const Polygon& poly)
