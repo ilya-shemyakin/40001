@@ -277,7 +277,7 @@ namespace timofeev
     else if (type == "ODD")
     {
       size_t vCount = std::count_if(collection.begin(), collection.end(),
-        [](const Polygon& shape) {return shape.Points.size() % 2 == 0; });
+        [](const Polygon& shape) {return shape.Points.size() % 2 == 1; });
       out << vCount << '\n';
     }
 
@@ -289,7 +289,7 @@ namespace timofeev
         throw std::invalid_argument("");
       }
       size_t countV = std::count_if(collection.begin(), collection.end(),
-        [&num](const Polygon& shape) {return shape.Points.size() % 2 == num; });
+        [&num](const Polygon& shape) {return shape.Points.size() == num; });
       out << countV << '\n';
     }
   }
