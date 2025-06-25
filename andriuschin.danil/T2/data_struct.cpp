@@ -4,7 +4,8 @@
 #include <iomanip>
 #include <cstring>
 
-#include "format_guard.hpp"
+#include <demand.hpp>
+#include <format_guard.hpp>
 #include "literals.hpp"
 
 std::ostream& andriuschin::operator<<(std::ostream& out, const andriuschin::DataStruct& value)
@@ -78,20 +79,4 @@ bool andriuschin::DsCompare::operator()(const DataStruct& lhs, const DataStruct&
   {
     return lhs.key3.size() < rhs.key3.size();
   }
-}
-
-std::istream& andriuschin::operator>>(std::istream& in, andriuschin::Demand&& value)
-{
-  std::istream::sentry sentry(in);
-  if (!sentry)
-  {
-    return in;
-  }
-
-  char c = '\0';
-  if (!(in >> c) || (c != value.expected))
-  {
-    in.setstate(std::ios::failbit);
-  }
-  return in;
 }
