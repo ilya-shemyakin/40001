@@ -9,6 +9,7 @@
 #include "commands.h"
 #include "Polygon.h"
 
+
 void invalidCommand()
 {
   std::cout << "<INVALID COMMAND>\n";
