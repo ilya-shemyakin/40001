@@ -9,7 +9,6 @@ static auto getData = std::bind(std::mem_fn(&Polygon::points), _1);
 static auto getDataSize = std::bind(&decltype(Polygon::points)::size, getData);
 static auto evenCond = std::bind(std::equal_to<>(), 0, std::bind(std::modulus<>(), std::bind(getDataSize, _1), 2));
 static auto logicalNot = std::bind(std::logical_not<>(), _1);
-static auto less = std::bind(std::less<>(), _1, _2);
 
 
 double AreaAccumulator::operator()(double accum, const Point& point) const

@@ -39,19 +39,15 @@ std::istream& operator>>(std::istream& stream, Polygon& value)
         return stream;
     }
     trojan::StreamGuard guard(stream);
-    std::vector< Point > temp;
     size_t count = 0;
-    if ((stream.peek() == '-') || !(stream >> count) || (count < 3)) {
-        stream.setstate(std::ios::failbit);
-    }
-    else {
+    if ((stream.peek() != '-') || (stream >> count) || (count >= 3)) {
+        std::vector< Point > temp;
         std::copy_n(std::istream_iterator< Point >(stream), count, std::back_inserter(temp));
         if (temp.size() == count) {
             value.points = std::move(temp);
-        }
-        else {
-            stream.setstate(std::ios::failbit);
+            return stream;
         }
     }
+    stream.setstate(std::ios::failbit);
     return stream;
 }

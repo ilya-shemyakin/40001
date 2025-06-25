@@ -59,13 +59,13 @@ bool maxx(const std::vector< Polygon >& polygons)
         return false;
     }
     if (parameter == "AREA") {
-        static auto getMaxArea = std::bind(std::greater<>(), std::bind(getArea, _1), std::bind(getArea, _2));
+        static auto getMaxArea = std::bind(std::less<>(), std::bind(getArea, _1), std::bind(getArea, _2));
         auto maxArea = std::max_element(polygons.begin(), polygons.end(), getMaxArea);
         std::cout << getArea(*maxArea) << '\n';
     }
     else if (parameter == "VERTEXES") {
-        static auto getMaxSize = std::bind(std::greater<>(), std::bind(getDataSize, _1), std::bind(getDataSize, _2));
-        auto maxVertexes = std::max_element(polygons.begin(), polygons.end(), getMaxSize);
+        static auto getMaxSize = std::bind(std::less<>(), std::bind(getDataSize, _1), std::bind(getDataSize, _2));
+        auto maxVertexes = std::max_element(polygons.begin(), polygons.end(), std::bind(getMaxSize, _1, _2));
         std::cout << maxVertexes->points.size() << '\n';
     }
     else {
@@ -99,9 +99,7 @@ bool count(const std::vector< Polygon >& polygons)
 {
     std::string parameter;
     std::cin >> parameter;
-    if (polygons.empty()) {
-        return false;
-    }
+
     if (parameter == "EVEN") {
         size_t count = std::accumulate(polygons.begin(), polygons.end(), 0, std::bind(std::plus<>(), _1,
             std::bind(EvenCountSelecter{}, _2)));
