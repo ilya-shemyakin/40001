@@ -279,13 +279,13 @@ auto getBoundingBox(const std::vector<Polygon>& polys,
     });
 }
 
+
 bool inFrame(const std::vector<Polygon>& polys, const Polygon& target)
 {
   using namespace std::placeholders;
 
   if (target.points.size() < 3)
   {
-    std::cout << "<INVALID COMMAND>\n";
     return false;
   }
 
@@ -295,7 +295,7 @@ bool inFrame(const std::vector<Polygon>& polys, const Polygon& target)
   }
 
   int min_x, min_y, max_x, max_y;
-  getBoundingBox(polys, min_x, min_y, max_x, max_y);
+  getBoundingBox(polys, min_x, max_x, min_y, max_y);
 
   auto isInFrame = std::bind(
     PointInFrameChecker(min_x, min_y, max_x, max_y),
@@ -303,7 +303,6 @@ bool inFrame(const std::vector<Polygon>& polys, const Polygon& target)
   );
 
   bool allInFrame = std::all_of(target.points.begin(), target.points.end(), isInFrame);
-  std::cout << (allInFrame ? "<TRUE>" : "<FALSE>") << "\n";
   return allInFrame;
 }
 
