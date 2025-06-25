@@ -184,6 +184,7 @@ double maxAreaVertexes(const std::string& parametr, const std::vector<Polygon>& 
     return static_cast<double>(max->points.size());
   }
 
+  invalidCommand();
   return 0.0;
 }
 
@@ -216,6 +217,7 @@ double minAreaVertexes(const std::string& parametr, const std::vector<Polygon>& 
     return static_cast<double>(min->points.size());
   }
 
+  invalidCommand();
   return 0.0;
 }
 
@@ -327,7 +329,12 @@ void processCommands(const std::vector<Polygon>& polygons)
       if (command == "AREA")
       {
         std::string param;
-        std::cin >> param;
+        if (!(std::cin >> param))
+        {
+          invalidCommand();
+          continue;
+        }
+
         if (param == "EVEN" || param == "ODD")
         {
           double area = areaEvenOdd(param, polygons);
@@ -348,6 +355,11 @@ void processCommands(const std::vector<Polygon>& polygons)
           try
           {
             size_t num = std::stoul(param);
+            if (num < 3)
+            {
+              invalidCommand();
+              continue;
+            }
             double area = areaNumOfVertex(num, polygons);
             std::cout << std::fixed << std::setprecision(1) << area << '\n';
           }
@@ -360,30 +372,80 @@ void processCommands(const std::vector<Polygon>& polygons)
       else if (command == "MAX")
       {
         std::string param;
-        std::cin >> param;
-        if (polygons.empty()) {
+        if (!(std::cin >> param))
+        {
           invalidCommand();
           continue;
         }
-        double result = maxAreaVertexes(param, polygons);
-        std::cout << std::fixed << std::setprecision(1) << result << '\n';
-      }
-      else if (command == "MIN")
-      {
-        std::string param;
-        std::cin >> param;
+
         if (polygons.empty())
         {
           invalidCommand();
           continue;
         }
-        double result = minAreaVertexes(param, polygons);
-        std::cout << std::fixed << std::setprecision(1) << result << '\n';
+
+        if (param == "AREA")
+        {
+          double result = maxAreaVertexes(param, polygons);
+          std::cout << std::fixed << std::setprecision(1) << result << '\n';
+        }
+        else if (param == "VERTEXES")
+        {
+          auto max = std::max_element(polygons.begin(), polygons.end(),
+            [](const Polygon& first, const Polygon& second)
+            {
+              return first.points.size() < second.points.size();
+            });
+          std::cout << max->points.size() << '\n';
+        }
+        else
+        {
+          invalidCommand();
+        }
+      }
+      else if (command == "MIN")
+      {
+        std::string param;
+        if (!(std::cin >> param))
+        {
+          invalidCommand();
+          continue;
+        }
+
+        if (polygons.empty())
+        {
+          invalidCommand();
+          continue;
+        }
+
+        if (param == "AREA")
+        {
+          double result = minAreaVertexes(param, polygons);
+          std::cout << std::fixed << std::setprecision(1) << result << '\n';
+        }
+        else if (param == "VERTEXES")
+        {
+          auto min = std::min_element(polygons.begin(), polygons.end(),
+            [](const Polygon& first, const Polygon& second)
+            {
+              return first.points.size() < second.points.size();
+            });
+          std::cout << min->points.size() << '\n';
+        }
+        else
+        {
+          invalidCommand();
+        }
       }
       else if (command == "COUNT")
       {
         std::string param;
-        std::cin >> param;
+        if (!(std::cin >> param))
+        {
+          invalidCommand();
+          continue;
+        }
+
         if (param == "EVEN" || param == "ODD")
         {
           size_t count = countEvenOdd(param, polygons);
@@ -394,11 +456,13 @@ void processCommands(const std::vector<Polygon>& polygons)
           try
           {
             int num = std::stoi(param);
-            int count = countNumOfVertexes(num, polygons);
-            if (count != -1)
+            if (num < 3)
             {
-              std::cout << count << '\n';
+              invalidCommand();
+              continue;
             }
+            size_t count = countNumOfVertexes(num, polygons);
+            std::cout << count << '\n';
           }
           catch (...)
           {
@@ -409,7 +473,11 @@ void processCommands(const std::vector<Polygon>& polygons)
       else if (command == "INFRAME")
       {
         Polygon target;
-        std::cin >> target;
+        if (!(std::cin >> target))
+        {
+          invalidCommand();
+          continue;
+        }
         bool result = inFrame(polygons, target);
         std::cout << (result ? "<TRUE>" : "<FALSE>") << '\n';
       }
@@ -418,7 +486,8 @@ void processCommands(const std::vector<Polygon>& polygons)
         size_t count = rightShapes(polygons);
         std::cout << count << '\n';
       }
-      else {
+      else
+      {
         invalidCommand();
       }
     }
