@@ -88,5 +88,18 @@ bool PolygonIntersectionChecker::operator()(const Polygon& other) const
     }
     std::vector<size_t> indices(target.points.size());
     std::iota(indices.begin(), indices.end(), 0);
-    return std::any_of(indices.begin(), indices.end(), TargetEdgeChecker(target, other));
+    if (std::any_of(indices.begin(), indices.end(), TargetEdgeChecker(target, other))) {
+        return true;
+    }
+    for (const Point& p : other.points) {
+        if (isPointInPolygon(target, p)) {
+            return true;
+        }
+    }
+    for (const Point& p : target.points) {
+        if (isPointInPolygon(other, p)) {
+            return true;
+        }
+    }
+    return false;
 }

@@ -40,7 +40,7 @@ std::istream& operator>>(std::istream& stream, Polygon& value)
     }
     trojan::StreamGuard guard(stream);
     size_t count = 0;
-    if ((stream.peek() != '-') || (stream >> count) || (count >= 3)) {
+    if ((stream.peek() != '-') && (stream >> count) && (count >= 3)) {
         std::vector< Point > temp;
         std::copy_n(std::istream_iterator< Point >(stream), count, std::back_inserter(temp));
         if (temp.size() == count) {

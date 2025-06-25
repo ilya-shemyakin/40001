@@ -49,3 +49,22 @@ bool segmentsIntersect(const Point& p1, const Point& p2, const Point& q1, const 
 
     return false;
 }
+bool isPointInPolygon(const Polygon& polygon, const Point& point)
+{
+    if (polygon.points.empty()) {
+        return false;
+    }
+    bool inside = false;
+    size_t n = polygon.points.size();
+    for (size_t i = 0, j = n - 1; i < n; j = i++) {
+        const Point& p1 = polygon.points[j];
+        const Point& p2 = polygon.points[i];
+        if ((p2.y > point.y) != (p1.y > point.y)) {
+            double intersectX = static_cast<double>(p1.x - p2.x) * (point.y - p2.y) / (p1.y - p2.y) + p2.x;
+            if (point.x < intersectX) {
+                inside = !inside;
+            }
+        }
+    }
+    return inside;
+}
