@@ -175,7 +175,8 @@ void Shapes::echo(const Wrapper& wrapper) {
         return;
     }
     size_t echoCount = 0;
-    for (auto shapeIt = shapes.begin(); shapeIt != shapes.end(); ) {
+    auto shapeIt = shapes.begin();
+    while (shapeIt != shapes.end()) {
         shapeIt = std::find(shapeIt, shapes.end(), workShape);
         if (shapeIt != shapes.end()) {
             shapeIt = shapes.insert(shapeIt + 1, workShape);
@@ -203,12 +204,12 @@ void Shapes::inFrame(const Wrapper& wrapper) {
         return;
     }
     Polygon rect = buildFrame();
-    for (auto& point : workShape.points)
-    {
-        if (!(rect.points[0] < point && rect.points[1] > point)) {
-            wrapper.cout << "<FALSE>" << std::endl;
-            return;
-        }
+    if (std::count_if(workShape.points.begin(), workShape.points.end(),
+                   [&](const auto& point) {
+                       return !(rect.points[0] < point && rect.points[1] > point);
+                   }) > 0) {
+        wrapper.cout << "<FALSE>" << std::endl;
+        return;
     }
     wrapper.cout << "<TRUE>" << std::endl;
 }
