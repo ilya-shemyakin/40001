@@ -28,7 +28,7 @@ std::istream& operator>>(std::istream& in, SllIO&& dest)
     std::string tmp;
     getline(in, tmp, ':');
     in.unget();
-    try { dest.ref = std::stoll(tmp); } 
+    try {dest.ref = std::stoll(tmp);} 
     catch (...) { in.setstate(std::ios::failbit); }
     return in;
 }
@@ -75,7 +75,7 @@ std::ostream& operator<<(std::ostream& out, const DataStruct& data)
     iofmtguard guard(out);
     out << "(:";
     out << "key1 " << data.key1 << ":";
-    out << "key2 #c(" << formatDouble(data.key2.real()) 
+    out << "key2 #c(" << formatDouble(data.key2.real())
         << " " << formatDouble(data.key2.imag()) << "):";
     out << "key3 \"" << data.key3 << "\":)";
     return out;
