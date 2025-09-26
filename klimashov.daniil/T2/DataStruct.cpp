@@ -28,7 +28,7 @@ std::istream& operator>>(std::istream& in, SllIO&& dest)
     std::string tmp;
     getline(in, tmp, ':');
     in.unget();
-    try {dest.ref = std::stoll(tmp);} 
+    try {dest.ref = std::stoll(tmp);}
     catch (...) { in.setstate(std::ios::failbit); }
     return in;
 }
