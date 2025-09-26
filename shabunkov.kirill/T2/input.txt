@@ -1,0 +1,21 @@
+(:key1 1.0d:key2 (:N -10:D 5:):key3 "Data":)
+(:key1 2.0D:key2 (:N -1:D 5:):key3 "Label":)
+(:key1 5.0d:key2 (:N -8:D 7:):key3 "sort":)
+(:key1 10.0D:key2 (:N -1:D 5:):key3 "IT":)
+(:key2 (:N -2:D 5:):key1 5.0d:key3 "programming":)
+
+(:key1 5.0:key2 (:N -1:D 5:):key3 "Data":)
+(:key2 5.0D:key1 (:N -100:D 5:):key3 "struct":)
+(:key1 17.0u:key2 (:N -1:D 5:):key3 "YouTube":)
+
+
+(:key3 "IT":key2 (:N -1:D 5:):key1 20.0d:)
+(:key3 "fact":key2 (:N -29:D 100:):key1 35.0d:)
+(:key1 100.0D:key2 (:N 8:D 25:):key3 "TORCH":)
+
+(:key1 5:key2 (:N -100:D 5:):key3 "WoRk":)
+(:key1 5.0D:key2 (:N -100.02:D 10:):key3 "Obama":)
+
+(:key1 -1000000.0D:key2 (:N 100000:D 1:):key3 "elephant":)
+(:key1 10.0d:key2 (:N 27:D 3:):key3 "element":)
+

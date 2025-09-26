@@ -20,12 +20,6 @@ namespace andriuschin
   {
     bool operator()(const DataStruct& lhs, const DataStruct& rhs) const;
   };
-
-  struct Demand
-  {
-    char expected = '\0';
-  };
-  std::istream& operator>>(std::istream& in, Demand&& value);
 }
 
 #endif
