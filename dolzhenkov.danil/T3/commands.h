@@ -27,3 +27,4 @@ bool arePolygonsEqual(const Polygon& a, const Polygon& b);
 size_t removeEcho(std::vector<Polygon>& polys, const Polygon& target);
 
 #endif
+

@@ -519,3 +519,4 @@ void processCommands(const std::vector<Polygon>& polygons)
         }
     }
 }
+
